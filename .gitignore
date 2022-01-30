@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Build folder
+build/*
+
+# VSCode settings
+*.vscode/
+
+# Misc files
+*.DS_Store
