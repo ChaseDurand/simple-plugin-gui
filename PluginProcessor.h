@@ -1,6 +1,8 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#define GAIN_ID "gain"
+#define GAIN_NAME "Gain"
 
 //==============================================================================
 class SimplePluginAudioProcessor : public juce::AudioProcessor
@@ -43,6 +45,7 @@ public:
     void setStateInformation(const void *data, int sizeInBytes) override;
 
     float mGain = 0.5;
+    juce::AudioProcessorValueTreeState treeState;
 
 private:
     //==============================================================================

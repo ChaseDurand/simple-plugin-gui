@@ -21,6 +21,9 @@ private:
     // access the processor object that created it.
     SimplePluginAudioProcessor &processorRef;
 
+public:
+    std::unique_ptr <juce::AudioProcessorValueTreeState::SliderAttachment> sliderValue;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SimplePluginAudioProcessorEditor)
 };

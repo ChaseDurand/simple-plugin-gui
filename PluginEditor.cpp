@@ -7,12 +7,14 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
 {
     juce::ignoreUnused(processorRef);
 
+    sliderValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.treeState, GAIN_ID, mGainSlider);
+
     mGainSlider.setSliderStyle (juce::Slider::SliderStyle::LinearVertical);
     mGainSlider.setRange(-60.0f, 12.0f, 0.01f);
-    mGainSlider.setValue(0.0f);
-    mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 20);
+    mGainSlider.setValue(0.0f); // TODO fix negative zero
+    mGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
+    mGainSlider.setDoubleClickReturnValue(true, 0.0f);
     addAndMakeVisible(mGainSlider);
-    mGainSlider.addListener(this);
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.

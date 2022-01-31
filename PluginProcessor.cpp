@@ -10,7 +10,8 @@ SimplePluginAudioProcessor::SimplePluginAudioProcessor()
 #endif
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-      )
+      ),
+treeState(*this, nullptr, "PARAMETER", { std::make_unique<juce::AudioParameterFloat> (GAIN_ID, GAIN_NAME, -60.0f, 12.0f, 0.0f) })
 {
 }
 
@@ -147,10 +148,11 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto *channelData = buffer.getWritePointer(channel);
+        auto sliderGainValue = treeState.getRawParameterValue(GAIN_ID)->load();
         juce::ignoreUnused(channelData);
 
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
-            channelData[sample] *= juce::Decibels::decibelsToGain(mGain);
+            channelData[sample] *= juce::Decibels::decibelsToGain(sliderGainValue);
         }
         
     }
