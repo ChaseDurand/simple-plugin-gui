@@ -46,6 +46,7 @@ public:
 
     float mGain = 0.5;
     juce::AudioProcessorValueTreeState treeState;
+    float previousGain;
 
 private:
     //==============================================================================
