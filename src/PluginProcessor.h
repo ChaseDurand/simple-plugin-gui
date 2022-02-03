@@ -43,10 +43,10 @@ public:
     //==============================================================================
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
-
-    float mGain = 0.5;
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> mGain = 1.0;
     juce::AudioProcessorValueTreeState treeState;
     float previousGain;
+    double gainSmoothingLengthSeconds = 0.05;
 
 private:
     //==============================================================================

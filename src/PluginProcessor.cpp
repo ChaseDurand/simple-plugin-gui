@@ -90,7 +90,8 @@ void SimplePluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPer
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     juce::ignoreUnused(sampleRate, samplesPerBlock);
-    previousGain = mGain;
+    mGain.reset(sampleRate, gainSmoothingLengthSeconds);
+    // previousGain = mGain.getValue();
 }
 
 void SimplePluginAudioProcessor::releaseResources()
@@ -148,38 +149,15 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     // interleaved by keeping the same state.
 
     auto currentGain = treeState.getRawParameterValue(GAIN_ID)->load();
-
-    if (currentGain == previousGain)
-    {
-        buffer.applyGain (juce::Decibels::decibelsToGain(currentGain));
+    mGain.setTargetValue(currentGain);
+    for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
+        auto currentGainDecibels = juce::Decibels::decibelsToGain((float)mGain.getNextValue());
+        for (int channel = 0; channel < totalNumInputChannels; ++channel){
+            auto *channelData = buffer.getWritePointer(channel);
+            channelData[sample] *= currentGainDecibels;
+            juce::ignoreUnused(channelData);
+        }
     }
-    else
-    {
-        buffer.applyGainRamp (0, buffer.getNumSamples(), juce::Decibels::decibelsToGain(previousGain), juce::Decibels::decibelsToGain(currentGain));
-        previousGain = currentGain;
-    }
-
-    // for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
-    //     auto currentGain = treeState.getRawParameterValue(GAIN_ID)->load();
-
-    //     if (currentGain == previousGain)
-    //     {
-    //         buffer.applyGain (currentGain);
-    //     }
-    //     else
-    //     {
-    //         buffer.applyGainRamp (0, buffer.getNumSamples(), previousGain, currentGain);
-    //         previousGain = currentGain;
-    //     }
-
-
-        // for (int channel = 0; channel < totalNumInputChannels; ++channel){
-        //     juce::ignoreUnused(channelData);
-        //     auto *channelData = buffer.getWritePointer(channel);
-        //     channelData[sample] *= juce::Decibels::decibelsToGain(currentGain);
-
-        // }
-    // }
 }
 
 //==============================================================================
