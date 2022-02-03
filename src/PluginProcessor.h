@@ -46,6 +46,7 @@ public:
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> mGain = 1.0;
     juce::AudioProcessorValueTreeState treeState;
     float previousGain;
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> levelSmoothed = 1.0;
     double gainSmoothingLengthSeconds = 0.05;
 
 private:

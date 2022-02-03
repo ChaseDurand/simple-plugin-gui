@@ -91,7 +91,7 @@ void SimplePluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPer
     // initialisation that you need..
     juce::ignoreUnused(sampleRate, samplesPerBlock);
     mGain.reset(sampleRate, gainSmoothingLengthSeconds);
-    // previousGain = mGain.getValue();
+    levelSmoothed.reset(sampleRate, gainSmoothingLengthSeconds);
 }
 
 void SimplePluginAudioProcessor::releaseResources()
@@ -149,12 +149,14 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     // interleaved by keeping the same state.
 
     auto currentGain = treeState.getRawParameterValue(GAIN_ID)->load();
-    mGain.setTargetValue(currentGain);
+    // mGain.setTargetValue(currentGain);
+    levelSmoothed.setTargetValue(currentGain);
+
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
-        auto currentGainDecibels = juce::Decibels::decibelsToGain((float)mGain.getNextValue());
+        auto gainToApply = juce::Decibels::decibelsToGain((float)levelSmoothed.getNextValue(), -60.0f);
         for (int channel = 0; channel < totalNumInputChannels; ++channel){
             auto *channelData = buffer.getWritePointer(channel);
-            channelData[sample] *= currentGainDecibels;
+            channelData[sample] *= gainToApply;
             juce::ignoreUnused(channelData);
         }
     }
