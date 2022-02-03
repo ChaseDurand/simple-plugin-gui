@@ -13,9 +13,9 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     addAndMakeVisible(decibelLabel);
 
     decibelSlider.setSliderStyle (juce::Slider::SliderStyle::LinearVertical);
-    decibelSlider.setValue (juce::Decibels::gainToDecibels (level, -60.0f));
-    decibelSlider.onValueChange = [this] { level = juce::Decibels::decibelsToGain ((float) decibelSlider.getValue(), -60.0f); };
-    decibelSlider.setRange(-60.0f, 12.0f, 0.01f);
+    decibelSlider.setValue (juce::Decibels::gainToDecibels (level, NEGATIVE_INF_THRESH));
+    decibelSlider.onValueChange = [this] { level = juce::Decibels::decibelsToGain ((float) decibelSlider.getValue(), NEGATIVE_INF_THRESH); };
+    decibelSlider.setRange(NEGATIVE_INF_THRESH, 12.0f, 0.01f);
     decibelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
     decibelSlider.setDoubleClickReturnValue(true, 0.0f);
     addAndMakeVisible(decibelSlider);

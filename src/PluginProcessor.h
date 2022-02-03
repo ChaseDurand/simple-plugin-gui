@@ -3,6 +3,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #define GAIN_ID "gain"
 #define GAIN_NAME "Gain"
+#define NEGATIVE_INF_THRESH -60.0f // db theshold for silence
 
 //==============================================================================
 class SimplePluginAudioProcessor : public juce::AudioProcessor

@@ -15,12 +15,13 @@ SimplePluginAudioProcessor::SimplePluginAudioProcessor()
 treeState(*this, nullptr, "PARAMETER", { std::make_unique<juce::AudioParameterFloat>
     (GAIN_ID,
     GAIN_NAME,
-    juce::NormalisableRange<float>(-60.f, 12.0f),
+    juce::NormalisableRange<float>(NEGATIVE_INF_THRESH, 12.0f),
     0.0f,
     juce::String(),
     juce::AudioProcessorParameter::genericParameter,
+    // Return "-inf" to host if gain is at lower threshold
     [](float value, int maximumStringLength) {
-        if ((value > -60.0f) || (maximumStringLength < 4)){
+        if ((value > NEGATIVE_INF_THRESH) || (maximumStringLength < 4)){
             return juce::Decibels::toString(value);
         }
         else{
@@ -169,7 +170,7 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     levelSmoothed.setTargetValue(currentGain);
 
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
-        auto gainToApply = juce::Decibels::decibelsToGain((float)levelSmoothed.getNextValue(), -60.0f);
+        auto gainToApply = juce::Decibels::decibelsToGain((float)levelSmoothed.getNextValue(), NEGATIVE_INF_THRESH);
         for (int channel = 0; channel < totalNumInputChannels; ++channel){
             auto *channelData = buffer.getWritePointer(channel);
             channelData[sample] *= gainToApply;
