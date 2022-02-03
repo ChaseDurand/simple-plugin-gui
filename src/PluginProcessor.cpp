@@ -11,7 +11,25 @@ SimplePluginAudioProcessor::SimplePluginAudioProcessor()
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
       ),
-treeState(*this, nullptr, "PARAMETER", { std::make_unique<juce::AudioParameterFloat> (GAIN_ID, GAIN_NAME, -60.0f, 12.0f, 0.0f) })
+
+treeState(*this, nullptr, "PARAMETER", { std::make_unique<juce::AudioParameterFloat>
+    (GAIN_ID,
+    GAIN_NAME,
+    juce::NormalisableRange<float>(-60.f, 12.0f),
+    0.0f,
+    juce::String(),
+    juce::AudioProcessorParameter::genericParameter,
+    [](float value, int maximumStringLength) {
+        if ((value > -60.0f) || (maximumStringLength < 4)){
+            return juce::Decibels::toString(value);
+        }
+        else{
+            return juce::String("-inf");
+        };
+    },
+    nullptr
+    )
+})
 {
 }
 
@@ -90,7 +108,6 @@ void SimplePluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPer
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     juce::ignoreUnused(sampleRate, samplesPerBlock);
-    mGain.reset(sampleRate, gainSmoothingLengthSeconds);
     levelSmoothed.reset(sampleRate, gainSmoothingLengthSeconds);
 }
 
@@ -149,7 +166,6 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     // interleaved by keeping the same state.
 
     auto currentGain = treeState.getRawParameterValue(GAIN_ID)->load();
-    // mGain.setTargetValue(currentGain);
     levelSmoothed.setTargetValue(currentGain);
 
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){

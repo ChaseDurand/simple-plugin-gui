@@ -3,8 +3,7 @@
 #include "PluginProcessor.h"
 
 //==============================================================================
-class SimplePluginAudioProcessorEditor : public juce::AudioProcessorEditor,
-                                         public juce::Slider::Listener
+class SimplePluginAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
     explicit SimplePluginAudioProcessorEditor(SimplePluginAudioProcessor &);
@@ -13,7 +12,6 @@ public:
     //==============================================================================
     void paint(juce::Graphics &) override;
     void resized() override;
-    void sliderValueChanged (juce::Slider* slider) override;
 
 private:
 
@@ -24,19 +22,17 @@ private:
                 auto minusInfinitydB = -60.0;
                 // Strip "db suffix and trim whitespace"
                 auto decibelText = text.upToFirstOccurrenceOf ("dB", false, false).trim();
-                // If remaining text is "-INF", return minusInfinitydB, otherwise return value
-                return decibelText.equalsIgnoreCase("-INF") ? minusInfinitydB : decibelText.getDoubleValue();
+                // If remaining text is "-inf", return minusInfinitydB, otherwise return value
+                return decibelText.equalsIgnoreCase("-inf") ? minusInfinitydB : decibelText.getDoubleValue();
                 
             }
 
             juce::String getTextFromValue (double value) override {
-                return (value <= -60.0) ? "-INF" : juce::Decibels::toString (value);
+                return (value <= -60.0) ? "-inf" : juce::Decibels::toString (value);
             }
         private:
             JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DecibelSlider)
     };
-    
-    juce::Slider mGainSlider;
 
     DecibelSlider decibelSlider;
     juce::Label decibelLabel;
