@@ -1,5 +1,6 @@
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <juce_audio_basics/juce_audio_basics.h>
+#include "CustomLookAndFeel.h"
 #define NEGATIVE_INF_THRESH -60.0f // db theshold for silence
 
 class RotaryDecibelSlider : public juce::Slider{
@@ -12,6 +13,7 @@ class RotaryDecibelSlider : public juce::Slider{
         double getValueFromText (const juce::String& text) override;
         juce::String getTextFromValue (double value) override;
     private:
+        RotaryDecibelSliderLookAndFeel rotaryDecibelSliderLookAndFeel;
         juce::Point<int> mousePosition;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RotaryDecibelSlider)
 };

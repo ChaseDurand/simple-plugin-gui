@@ -2,6 +2,7 @@
 
 
 RotaryDecibelSlider::RotaryDecibelSlider() : juce::Slider(){
+    setLookAndFeel(&rotaryDecibelSliderLookAndFeel);
 }
 RotaryDecibelSlider:: ~RotaryDecibelSlider() {
     setLookAndFeel(nullptr);
@@ -27,5 +28,5 @@ double RotaryDecibelSlider::getValueFromText (const juce::String& text){
 }
 
 juce::String RotaryDecibelSlider::getTextFromValue (double value){
-    return (value <= NEGATIVE_INF_THRESH) ? "-inf" : juce::Decibels::toString (value);
+    return (value <= NEGATIVE_INF_THRESH) ? "-inf" : juce::Decibels::toString (value, 1);
 }
