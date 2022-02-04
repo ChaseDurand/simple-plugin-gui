@@ -15,7 +15,7 @@ SimplePluginAudioProcessor::SimplePluginAudioProcessor()
 treeState(*this, nullptr, "PARAMETER", { std::make_unique<juce::AudioParameterFloat>
     (GAIN_ID,
     GAIN_NAME,
-    juce::NormalisableRange<float>(NEGATIVE_INF_THRESH, 12.0f),
+    juce::NormalisableRange<float>(NEGATIVE_INF_THRESH, 36.0f),
     0.0f,
     juce::String(),
     juce::AudioProcessorParameter::genericParameter,

@@ -72,7 +72,8 @@ juce_add_plugin(SimplePluginGUI
 target_sources(SimplePluginGUI
     PRIVATE
         PluginEditor.cpp
-        PluginProcessor.cpp)
+        PluginProcessor.cpp
+        RotaryDecibelSlider.cpp)
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use

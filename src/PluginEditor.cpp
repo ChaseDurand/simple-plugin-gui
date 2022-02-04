@@ -7,18 +7,21 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
 {
     juce::ignoreUnused(processorRef);
 
-    sliderValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.treeState, GAIN_ID, decibelSlider);
+    sliderValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.treeState, GAIN_ID, rotaryDecibelSlider);
 
-    decibelLabel.setText ("Gain", juce::dontSendNotification);
-    addAndMakeVisible(decibelLabel);
+    rotaryDecibelLabel.setText ("Gain", juce::dontSendNotification);
+    addAndMakeVisible(rotaryDecibelLabel);
 
-    decibelSlider.setSliderStyle (juce::Slider::SliderStyle::LinearVertical);
-    decibelSlider.setValue (juce::Decibels::gainToDecibels (level, NEGATIVE_INF_THRESH));
-    decibelSlider.onValueChange = [this] { level = juce::Decibels::decibelsToGain ((float) decibelSlider.getValue(), NEGATIVE_INF_THRESH); };
-    decibelSlider.setRange(NEGATIVE_INF_THRESH, 12.0f, 0.01f);
-    decibelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
-    decibelSlider.setDoubleClickReturnValue(true, 0.0f);
-    addAndMakeVisible(decibelSlider);
+    rotaryDecibelSlider.setSliderStyle (juce::Slider::SliderStyle::RotaryVerticalDrag);
+    rotaryDecibelSlider.setSkewFactorFromMidPoint(0.0f);
+    rotaryDecibelSlider.setValue (juce::Decibels::gainToDecibels (level, NEGATIVE_INF_THRESH));
+    rotaryDecibelSlider.onValueChange = [this] { level = juce::Decibels::decibelsToGain ((float) rotaryDecibelSlider.getValue(), NEGATIVE_INF_THRESH); };
+    rotaryDecibelSlider.setRange(NEGATIVE_INF_THRESH, 36.0f, 0.01f);
+    rotaryDecibelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
+    rotaryDecibelSlider.setDoubleClickReturnValue(true, 0.0f);
+    addAndMakeVisible(rotaryDecibelSlider);
+
+    
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -42,6 +45,6 @@ void SimplePluginAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 
-    decibelSlider.setBounds(getWidth() / 4, getHeight() / 2 - 75, 100, 150);
-    decibelLabel.setBounds(getWidth() / 4, 10, 60, 20);
+    rotaryDecibelSlider.setBounds(getWidth() / 4, getHeight() / 2 - 75, 100, 150);
+    rotaryDecibelLabel.setBounds(getWidth() / 4, 10, 60, 20);
 }
