@@ -17,7 +17,7 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     rotaryDecibelSlider.setValue (juce::Decibels::gainToDecibels (level, NEGATIVE_INF_THRESH));
     rotaryDecibelSlider.onValueChange = [this] { level = juce::Decibels::decibelsToGain ((float) rotaryDecibelSlider.getValue(), NEGATIVE_INF_THRESH); };
     rotaryDecibelSlider.setRange(NEGATIVE_INF_THRESH, 24.0f, 0.1f);
-    rotaryDecibelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 80, 20);
+    rotaryDecibelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 80, 30);
     rotaryDecibelSlider.setDoubleClickReturnValue(true, 0.0f);
     addAndMakeVisible(rotaryDecibelSlider);
 
@@ -33,8 +33,8 @@ SimplePluginAudioProcessorEditor::~SimplePluginAudioProcessorEditor()
 //==============================================================================
 void SimplePluginAudioProcessorEditor::paint(juce::Graphics &g)
 {
-    g.setGradientFill(juce::ColourGradient(juce::Colour(50, 51, 55), 0, 0,
-                                            juce::Colour(22, 22, 22), getWidth(), getHeight(), false));
+    g.setGradientFill(juce::ColourGradient(juce::Colour(60, 60, 60), 0, 0,
+                                            juce::Colour(30, 30, 30), getWidth(), getHeight(), false));
     g.fillAll();
     
 }
@@ -44,6 +44,6 @@ void SimplePluginAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 
-    rotaryDecibelSlider.setBounds(getWidth() / 2, getHeight() / 2 - 75, 80, 80);
-    rotaryDecibelLabel.setBounds(getWidth() / 2, 10, 60, 20);
+    rotaryDecibelSlider.setBounds(getWidth() / 2, getHeight() / 2 - 75, 100, 120);
+    // rotaryDecibelLabel.setBounds(getWidth() / 2, 10, 60, 20);
 }

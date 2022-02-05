@@ -1,4 +1,4 @@
-#include <juce_gui_basics/juce_gui_basics.h>
+// #include <juce_gui_basics/juce_gui_basics.h>
 #include "CustomLookAndFeel.h"
 
 RotaryDecibelSliderLookAndFeel::RotaryDecibelSliderLookAndFeel() : LookAndFeel_V4(){
@@ -9,14 +9,24 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     int width, int height, float sliderPos, const float rotaryStartAngle, const float
     rotaryEndAngle, juce::Slider&){
     
-    auto radius = (float) juce::jmin (width / 2, height / 2) - 6.0f;
-    auto centreX = (float) x + (float) width  * 0.5f;
-    auto centreY = (float) y + (float) height * 0.5f + 3.5f;
+    auto radius = (float) (width / 2) * (0.7f);
+    auto centreX = (float) x + (float) width * 0.5f;
+    auto centreY = (float) y + (float) width * 0.5f;
     auto rx = centreX - radius;
     auto ry = centreY - radius;
     auto rw = radius * 2.0f;
     auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
     float innerRadiusPercent = 0.76f;
+    juce::Path p;
+
+    // Drop shadow
+    // float shadowWidth = 1.8f * radius;
+    // int shadowRadius = (int)(2.0f * radius);
+    // auto shadow = juce::DropShadow(juce::Colours::black, shadowRadius, juce::Point<int>(0,0));
+    // p.clear();
+    // p.startNewSubPath(centreX - 0.5f * shadowWidth, ry + 0.5f * radius);
+    // p.addEllipse(centreX - 0.5f * shadowWidth,  ry + 0.5f * radius, shadowWidth, shadowWidth);
+    // shadow.drawForPath(g, p);
 
     // Outer circle gradient
     g.setGradientFill(juce::ColourGradient(juce::Colour(114, 114, 114), centreX, ry,
@@ -36,9 +46,9 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     g.drawEllipse (rx + radius * (1.0f-innerRadiusPercent), ry + radius * (1.0f-innerRadiusPercent), rw * innerRadiusPercent, rw * innerRadiusPercent, 2.0f);
 
     // Pointer border
-    juce::Path p;
     auto pointerLength = radius * 0.8f;
-    auto pointerThickness = 8.0f;
+    auto pointerThickness = 9.0f;
+    p.clear();
     p.addRectangle(-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
     p.applyTransform(juce::AffineTransform::rotation (angle).translated (centreX, centreY));
     g.setColour(juce::Colours::black);
@@ -46,28 +56,32 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
 
     // Pointer inner color
     p.clear();
-    pointerLength = radius * 0.62f;
-    pointerThickness = 4.0f;
-    p.addRectangle(-pointerThickness * 0.5f, -radius+2.2f, pointerThickness, pointerLength);
+    pointerLength = radius * 0.66f;
+    pointerThickness *= 0.5f;
+    p.addRectangle(-pointerThickness * 0.5f, -radius * 0.93f, pointerThickness, pointerLength);
     p.applyTransform(juce::AffineTransform::rotation (angle).translated (centreX, centreY));
     g.setColour(juce::Colour(110, 221, 202));
     g.fillPath(p);
 
-    // Outer arc background
+    // Outer arc 
+    float arcSize = 1.3f * radius;
     p.clear();
-    p.startNewSubPath(centreX+1.3f*radius*sin(rotaryStartAngle), centreY-1.3f*radius*cos(rotaryStartAngle));
-    p.addCentredArc(centreX, centreY, radius * 1.3f, radius * 1.3f,
+    p.startNewSubPath(centreX + arcSize * sin(rotaryStartAngle), centreY - arcSize * cos(rotaryStartAngle));
+    p.addCentredArc(centreX, centreY, arcSize, arcSize,
         0.0f, rotaryStartAngle, rotaryEndAngle, false);
     g.setColour(juce::Colour(72, 72, 72));
     g.strokePath(p, juce::PathStrokeType(4.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded));
 
     // Outer arc foreground
     p.clear();
-    p.startNewSubPath(centreX+1.3f*radius*sin(rotaryStartAngle), centreY-1.3f*radius*cos(rotaryStartAngle));
-    p.addCentredArc(centreX, centreY, radius * 1.3f, radius * 1.3f,
+    p.startNewSubPath(centreX + arcSize * sin(rotaryStartAngle), centreY - arcSize * cos(rotaryStartAngle));
+    p.addCentredArc(centreX, centreY, arcSize, arcSize,
         0.0f, rotaryStartAngle, angle, false);
     g.setColour(juce::Colour(110, 221, 202));
     g.strokePath(p, juce::PathStrokeType(4.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded));
+
+
+    return;
 }
 
 juce::Label* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& slider){
@@ -77,6 +91,8 @@ juce::Label* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& s
     {
         l->setColour (juce::Label::textColourId, juce::Colours::black.withAlpha (0.7f));
     }
+    
     l->setColour (juce::Label::outlineColourId, juce::Colours::black.withAlpha(0.0f)); // Make label transparant
+    l->setColour (juce::Label::textColourId, juce::Colour(170, 170, 170));
     return l;
 }
