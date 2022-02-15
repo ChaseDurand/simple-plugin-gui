@@ -148,9 +148,14 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
 
-    // auto muteStatus = apvts.getRawParameterValue(MUTE_ID)->load();
-    auto currentGain = apvts.getRawParameterValue(GAIN_ID)->load();
-    levelSmoothed.setTargetValue(currentGain);
+    auto muteStatus = apvts.getRawParameterValue(MUTE_ID)->load();
+    if (muteStatus == 0.0f){
+        levelSmoothed.setTargetValue(NEGATIVE_INF_THRESH);
+    }
+    else{
+        auto currentGain = apvts.getRawParameterValue(GAIN_ID)->load();
+        levelSmoothed.setTargetValue(currentGain);
+    }
 
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
         auto gainToApply = juce::Decibels::decibelsToGain((float)levelSmoothed.getNextValue(), NEGATIVE_INF_THRESH);
@@ -226,7 +231,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimplePluginAudioProcessor::
 
     parameters.push_back
         (std::make_unique<juce::AudioParameterBool>
-            (MUTE_NAME, MUTE_ID, false));
+            (MUTE_ID, MUTE_NAME, false));
 
     return { parameters.begin(), parameters.end() };
 }

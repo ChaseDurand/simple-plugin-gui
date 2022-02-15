@@ -17,9 +17,10 @@ public:
 private:
     // juce::Label rotaryDecibelLabel;
     RotaryDecibelSlider gainKnob;
-    // juce::ToggleButton muteButton;
+    juce::ToggleButton muteButton;
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> muteButtonAttachment;
 
     
     

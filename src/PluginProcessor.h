@@ -5,7 +5,7 @@
 #define GAIN_NAME "Gain"
 #define GAIN_MAX 24.0f
 #define NEGATIVE_INF_THRESH -60.0f // db theshold for silence
-#define MUTE_ID "mute"
+#define MUTE_ID "MUTE"
 #define MUTE_NAME "Mute"
 
 //==============================================================================

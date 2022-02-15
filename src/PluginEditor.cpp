@@ -16,7 +16,10 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     gainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         processorRef.apvts, GAIN_ID, gainKnob);
 
-    // addAndMakeVisible(muteButton);
+
+    addAndMakeVisible(muteButton);
+    muteButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
+        processorRef.apvts, MUTE_ID, muteButton);
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -40,7 +43,7 @@ void SimplePluginAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-    // muteButton.setBounds(10, 10, 100, 100);
+    muteButton.setBounds(20, 20, 100, 100);
     gainKnob.setBounds(getWidth() / 2, getHeight() / 2 - 75, 100, 120);
 
 }
