@@ -1,9 +1,12 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
-#define GAIN_ID "gain"
+#define GAIN_ID "GAIN"
 #define GAIN_NAME "Gain"
+#define GAIN_MAX 24.0f
 #define NEGATIVE_INF_THRESH -60.0f // db theshold for silence
+#define MUTE_ID "mute"
+#define MUTE_NAME "Mute"
 
 //==============================================================================
 class SimplePluginAudioProcessor : public juce::AudioProcessor
@@ -44,8 +47,10 @@ public:
     //==============================================================================
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
-    juce::AudioProcessorValueTreeState treeState;
-    float previousGain;
+    
+    juce::AudioProcessorValueTreeState apvts; //previously treeState
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+    // float previousGain;
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> levelSmoothed = 1.0;
     double gainSmoothingLengthSeconds = 0.05;
 

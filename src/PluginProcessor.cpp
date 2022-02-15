@@ -3,6 +3,7 @@
 
 //==============================================================================
 SimplePluginAudioProcessor::SimplePluginAudioProcessor()
+#ifndef JucePlugin_PreferredChannelConfigurations
     : AudioProcessor(BusesProperties()
 #if !JucePlugin_IsMidiEffect
 #if !JucePlugin_IsSynth
@@ -10,27 +11,8 @@ SimplePluginAudioProcessor::SimplePluginAudioProcessor()
 #endif
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-      ),
-
-treeState(*this, nullptr, "PARAMETER", { std::make_unique<juce::AudioParameterFloat>
-    (GAIN_ID,
-    GAIN_NAME,
-    juce::NormalisableRange<float>(NEGATIVE_INF_THRESH, 24.0f),
-    0.0f,
-    juce::String(),
-    juce::AudioProcessorParameter::genericParameter,
-    // Return "-inf" to host if gain is at lower threshold
-    [](float value, int maximumStringLength) {
-        if ((value > NEGATIVE_INF_THRESH) || (maximumStringLength < 4)){
-            return juce::Decibels::toString(value);
-        }
-        else{
-            return juce::String("-inf");
-        };
-    },
-    nullptr
-    )
-})
+    ), apvts(*this, nullptr, "Parameters", createParameters())
+#endif
 {
 }
 
@@ -166,7 +148,8 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
 
-    auto currentGain = treeState.getRawParameterValue(GAIN_ID)->load();
+    // auto muteStatus = apvts.getRawParameterValue(MUTE_ID)->load();
+    auto currentGain = apvts.getRawParameterValue(GAIN_ID)->load();
     levelSmoothed.setTargetValue(currentGain);
 
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
@@ -211,4 +194,39 @@ void SimplePluginAudioProcessor::setStateInformation(const void *data, int sizeI
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
 {
     return new SimplePluginAudioProcessor();
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout SimplePluginAudioProcessor::createParameters(){
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+    
+    // Calculate skew value for gain knob to set 0dB at 12 o'clock.
+    float gainCenterPoint = 0.0f;
+    float gainSkew = std::log (static_cast<float> (0.5)) /
+        std::log ((gainCenterPoint - NEGATIVE_INF_THRESH)
+            / (GAIN_MAX - NEGATIVE_INF_THRESH));
+
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>
+    (GAIN_ID,
+    GAIN_NAME,
+    juce::NormalisableRange<float>(NEGATIVE_INF_THRESH, GAIN_MAX, 0, gainSkew, false),
+    0.0f,
+    juce::String(),
+    juce::AudioProcessorParameter::genericParameter,
+    // Return "-inf" to host if gain is at lower threshold
+    [](float value, int maximumStringLength) {
+        if ((value > NEGATIVE_INF_THRESH) || (maximumStringLength < 4)){
+            return juce::Decibels::toString(value);
+        }
+        else{
+            return juce::String("-inf");
+        };
+    },
+    nullptr
+    ));
+
+    parameters.push_back
+        (std::make_unique<juce::AudioParameterBool>
+            (MUTE_NAME, MUTE_ID, false));
+
+    return { parameters.begin(), parameters.end() };
 }
