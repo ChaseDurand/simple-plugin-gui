@@ -74,6 +74,7 @@ target_sources(SimplePluginGUI
         PluginEditor.cpp
         PluginProcessor.cpp
         RotaryDecibelSlider.cpp
+        MuteButton.cpp
         CustomLookAndFeel.cpp)
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer

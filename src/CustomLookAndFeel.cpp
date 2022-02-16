@@ -63,7 +63,7 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     g.setColour(juce::Colour(110, 221, 202));
     g.fillPath(p);
 
-    // Outer arc 
+    // Outer arc background
     float arcSize = 1.3f * radius;
     p.clear();
     p.startNewSubPath(centreX + arcSize * sin(rotaryStartAngle), centreY - arcSize * cos(rotaryStartAngle));
@@ -72,7 +72,7 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     g.setColour(juce::Colour(72, 72, 72));
     g.strokePath(p, juce::PathStrokeType(4.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded));
 
-    // Outer arc foreground
+    // Outer arc foreground glow
     p.clear();
     p.startNewSubPath(centreX + arcSize * sin(rotaryStartAngle), centreY - arcSize * cos(rotaryStartAngle));
     p.addCentredArc(centreX, centreY, arcSize, arcSize,
@@ -84,7 +84,8 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     return;
 }
 
-juce::Label* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& slider){
+juce::Label* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& slider)
+{
     auto* l = juce::LookAndFeel_V2::createSliderTextBox (slider);
     if (getCurrentColourScheme() == juce::LookAndFeel_V4::getGreyColourScheme() && (slider.getSliderStyle() == juce::Slider::LinearBar
                                                                                || slider.getSliderStyle() == juce::Slider::LinearBarVertical))
@@ -96,3 +97,50 @@ juce::Label* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& s
     l->setColour (juce::Label::textColourId, juce::Colour(170, 170, 170));
     return l;
 }
+
+///////////////////////////////////////
+//            Mute Button            //
+///////////////////////////////////////
+
+void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& button, float x, float y,
+    float w, float h, bool ticked, bool isEnabled,
+    bool shouldDrawButtonAsHighlighted,
+    bool shouldDrawButtonAsDown)
+{
+
+    float circum = 94.0f;
+    float radius = circum / 2.0f;
+
+    float offsetX = (button.getWidth() - circum) * 0.5f;
+    float offsetY = (button.getHeight() - circum) * 0.5f;
+
+
+    if (ticked)
+    {
+        // Enabled
+        g.setColour(juce::Colour(110, 221, 202));
+    }
+    else{
+        // Disabled
+        g.setColour (juce::Colours::black);
+    }
+    g.drawEllipse (0.0f+offsetX, 0.0f+offsetY, circum, circum, 2.0f);
+
+    return;
+}
+
+// void MuteButtonLookAndFeel::paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown)
+// {
+//     auto h = float(getHeight());
+//     auto area = getLocalBounds().toFloat();
+
+//     juce::Path p;  // leaving as a path so an optional outline can be added
+//     p.addRoundedRectangle(area, h / 2.0f);
+//     g.setColour(Colours::darkgrey.interpolatedWith(Colours::green, position * position));
+//     g.fillPath(p);
+
+//     g.setColour(Colours::lightgrey);
+//     auto circleBounds = area.withWidth(h).translated((area.getWidth() - h) * position, 0.0f);
+//     g.fillEllipse(circleBounds.reduced(1.0f));
+//     return;
+// }

@@ -2,6 +2,7 @@
 
 #include "PluginProcessor.h"
 #include "RotaryDecibelSlider.h"
+#include "MuteButton.h"
 
 //==============================================================================
 class SimplePluginAudioProcessorEditor : public juce::AudioProcessorEditor
@@ -17,7 +18,7 @@ public:
 private:
     // juce::Label rotaryDecibelLabel;
     RotaryDecibelSlider gainKnob;
-    juce::ToggleButton muteButton;
+    MuteButton muteButton;
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> muteButtonAttachment;
