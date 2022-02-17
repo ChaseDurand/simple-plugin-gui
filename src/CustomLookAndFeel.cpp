@@ -107,40 +107,130 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
     bool shouldDrawButtonAsHighlighted,
     bool shouldDrawButtonAsDown)
 {
+    float outerRadiusPercent = 0.94f;
+    float outerRadius = button.getWidth() * outerRadiusPercent * 0.5f;
+    float innerRadiusPercent = 0.76f;
+    float innerRadius =  button.getWidth() * innerRadiusPercent * 0.5f;
+    float switchRadiusPercent = 0.64f;
+    float switchRadius = button.getWidth() * switchRadiusPercent * 0.5f;
 
-    float circum = 94.0f;
-    float radius = circum / 2.0f;
+    float offsetX = (button.getWidth() - outerRadius * 2.0f) * 0.5f;
+    float offsetY = (button.getHeight() - outerRadius * 2.0f) * 0.5f;
 
-    float offsetX = (button.getWidth() - circum) * 0.5f;
-    float offsetY = (button.getHeight() - circum) * 0.5f;
+    float offsetXinner = (button.getWidth() - (outerRadius * 2.0f) * innerRadiusPercent) * 0.5f;
+    float offsetYinner = (button.getHeight() - (outerRadius * 2.0f) * innerRadiusPercent) * 0.5f;
+
+    float centreX = x + 0.5 * w;
+    float centreY = y + 0.5 * h;
+
+    // Outer circle gradient
+    g.setGradientFill(juce::ColourGradient(juce::Colour(80, 80, 80), centreX, y,
+                                            juce::Colour(32, 32, 32), centreX, centreY + outerRadius, false));
+    g.fillEllipse (offsetX, offsetY, (outerRadius * 2.0f), (outerRadius * 2.0f));
+
+    // Outer circle outline
+    g.setColour(juce::Colours::black);
+    g.drawEllipse (offsetX, offsetY,
+        (outerRadius * 2.0f), (outerRadius * 2.0f), 2.0f);
 
 
+    // Inner circle outline
+    g.setColour(juce::Colours::black);
+    g.drawEllipse (button.getWidth() * 0.5f - innerRadius,
+        button.getWidth() * 0.5f - innerRadius,
+        innerRadius * 2.0f, innerRadius * 2.0f, 2.0f);
+
+    // On/off LED
+    float lightCircum = 16.0f;
+    float lightRadius = lightCircum * 0.5f;
+    float lightOffsetX = (button.getWidth() - lightCircum) * 0.5f;
+    float lightOffsetY = 16.0f;
     if (ticked)
     {
         // Enabled
-        g.setColour(juce::Colour(110, 221, 202));
+        // Inner circle
+        g.setGradientFill(juce::ColourGradient(juce::Colour(70, 70, 70), button.getWidth() * 0.5,
+                                            button.getHeight() * 0.8f,
+                                            juce::Colour(20, 20, 20), button.getWidth() * 0.5,
+                                            button.getHeight() * 0.5f, true));
+
+        g.fillEllipse (button.getWidth() * 0.5f - innerRadius,
+            button.getWidth() * 0.5f - innerRadius,
+            innerRadius * 2.0f, innerRadius * 2.0f);
+        // Switch gradient
+        g.setGradientFill(juce::ColourGradient(juce::Colour(70, 70, 70), button.getWidth() * 0.5,
+                                            button.getWidth() * 0.5f - innerRadius,
+                                            juce::Colour(30, 30, 30), button.getWidth() * 0.5,
+                                            button.getWidth() * 0.5f - 0.2 * innerRadius, false));
+        g.fillEllipse (button.getWidth() * 0.5f - switchRadius,
+                    button.getWidth() * 0.5f - innerRadius,
+                    switchRadius * 2.0f, switchRadius * 2.0f);
+
+        // Switch outline
+        g.setGradientFill(juce::ColourGradient(juce::Colour(90, 90, 90), button.getWidth() * 0.5,
+                                            button.getWidth() * 0.5f - innerRadius,
+                                            juce::Colour(70, 70, 70), button.getWidth() * 0.5,
+                                            button.getWidth() * 0.5f, false));
+        g.drawEllipse(button.getWidth() * 0.5f - switchRadius,
+                    button.getWidth() * 0.5f - innerRadius,
+                    switchRadius * 2.0f, switchRadius * 2.0f, 1.0f);
+
+        // Light color
+        g.setGradientFill(juce::ColourGradient(juce::Colour(250, 100, 100),
+            button.getWidth() * 0.5f + lightRadius * 0.2f,
+            lightOffsetY + 0.5f * lightRadius,
+            juce::Colour(170, 20, 10),  button.getWidth() * 0.5f - lightRadius,
+            lightOffsetY + 1.5f * lightRadius, true));
+        g.fillEllipse (lightOffsetX, lightOffsetY,
+            lightCircum, lightCircum);
+        // On/off LED outline
+        g.setColour(juce::Colours::black);
+        g.drawEllipse (lightOffsetX, lightOffsetY,
+            lightCircum, lightCircum, 1.0f);
     }
     else{
         // Disabled
-        g.setColour (juce::Colours::black);
+        // Inner circle
+        g.setGradientFill(juce::ColourGradient(juce::Colour(70, 70, 70), button.getWidth() * 0.5,
+                                            button.getHeight() * 0.2f,
+                                            juce::Colour(20, 20, 20), button.getWidth() * 0.5,
+                                            button.getHeight() * 0.5f, true));
+        g.fillEllipse (button.getWidth() * 0.5f - innerRadius,
+            button.getWidth() * 0.5f - innerRadius,
+            innerRadius * 2.0f, innerRadius * 2.0f);
+        // Switch gradient
+        g.setGradientFill(juce::ColourGradient(juce::Colour(30, 30, 30), button.getWidth() * 0.5,
+                                            button.getWidth() * 0.5f + 0.3f * innerRadius,
+                                            juce::Colour(70, 70, 70), button.getWidth() * 0.5,
+                                            button.getWidth() * 0.5f + innerRadius, false));
+        g.fillEllipse (button.getWidth() * 0.5f - switchRadius,
+                    button.getWidth() * 0.5f + innerRadius - 2.0f * switchRadius,
+                    switchRadius * 2.0f, switchRadius * 2.0f);
+
+        // Switch outline
+        g.setGradientFill(juce::ColourGradient(juce::Colour(90, 90, 90), button.getWidth() * 0.5,
+                                            button.getWidth() * 0.5f - innerRadius,
+                                            juce::Colour(70, 70, 70), button.getWidth() * 0.5,
+                                            button.getWidth() * 0.5f, false));
+        g.drawEllipse(button.getWidth() * 0.5f - switchRadius,
+                    button.getWidth() * 0.5f + innerRadius - 2.0f * switchRadius,
+                    switchRadius * 2.0f, switchRadius * 2.0f, 1.0f);
+
+        float lightOffOffset = 1.55f;
+        float lightOffParalax = 0.9f;
+        // Light color
+        g.setGradientFill(juce::ColourGradient(juce::Colour(200, 26, 47),
+            button.getWidth() * 0.5f + lightRadius * 0.2f,
+            lightOffsetY + 0.5f * lightRadius,
+            juce::Colour(80, 16, 8),  button.getWidth() * 0.5f - lightRadius,
+            lightOffsetY + 1.5f * lightRadius, true));
+        g.fillEllipse (lightOffsetX, lightOffsetY * lightOffOffset,
+            lightCircum, lightCircum * lightOffParalax);
+        // On/off LED outline
+        g.setColour(juce::Colours::black);
+        g.drawEllipse (lightOffsetX, lightOffsetY * lightOffOffset,
+            lightCircum, lightCircum * lightOffParalax, 1.0f);
     }
-    g.drawEllipse (0.0f+offsetX, 0.0f+offsetY, circum, circum, 2.0f);
 
     return;
 }
-
-// void MuteButtonLookAndFeel::paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown)
-// {
-//     auto h = float(getHeight());
-//     auto area = getLocalBounds().toFloat();
-
-//     juce::Path p;  // leaving as a path so an optional outline can be added
-//     p.addRoundedRectangle(area, h / 2.0f);
-//     g.setColour(Colours::darkgrey.interpolatedWith(Colours::green, position * position));
-//     g.fillPath(p);
-
-//     g.setColour(Colours::lightgrey);
-//     auto circleBounds = area.withWidth(h).translated((area.getWidth() - h) * position, 0.0f);
-//     g.fillEllipse(circleBounds.reduced(1.0f));
-//     return;
-// }

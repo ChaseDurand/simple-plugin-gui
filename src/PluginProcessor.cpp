@@ -150,13 +150,17 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
 
     auto muteStatus = apvts.getRawParameterValue(MUTE_ID)->load();
     if (muteStatus == 0.0f){
-        levelSmoothed.setTargetValue(NEGATIVE_INF_THRESH);
-    }
-    else{
+        // Not muted, use gain value.
         auto currentGain = apvts.getRawParameterValue(GAIN_ID)->load();
         levelSmoothed.setTargetValue(currentGain);
     }
+    else{
+        // Muted, use negative infinity gain.
+        levelSmoothed.setTargetValue(NEGATIVE_INF_THRESH);
+    }
 
+    // Because we are applying a gain ramp across the buffer,
+    // process all channels per sample (vs all samples per channels).
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
         auto gainToApply = juce::Decibels::decibelsToGain((float)levelSmoothed.getNextValue(), NEGATIVE_INF_THRESH);
         for (int channel = 0; channel < totalNumInputChannels; ++channel){

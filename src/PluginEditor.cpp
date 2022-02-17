@@ -32,8 +32,8 @@ SimplePluginAudioProcessorEditor::~SimplePluginAudioProcessorEditor()
 //==============================================================================
 void SimplePluginAudioProcessorEditor::paint(juce::Graphics &g)
 {
-    g.setGradientFill(juce::ColourGradient(juce::Colour(60, 60, 60), 0, 0,
-                                           juce::Colour(30, 30, 30), getWidth(),
+    g.setGradientFill(juce::ColourGradient(juce::Colour(50, 50, 50), 0, 0,
+                                           juce::Colour(20, 20, 20), getWidth(),
                                            getHeight(), false));
     g.fillAll();
 }
@@ -42,7 +42,7 @@ void SimplePluginAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-    muteButton.setBounds(getWidth() / 4 - 50, getHeight() / 2 - 50, 100, 100);
+    muteButton.setBounds(getWidth() / 4 - 50, getHeight() / 2 - 50, 80, 80);
     gainKnob.setBounds(getWidth() / 2 - 50, getHeight() / 2 - 60, 100, 120);
 
 }

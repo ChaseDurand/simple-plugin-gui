@@ -10,7 +10,7 @@ MuteButton:: ~MuteButton() {
 
 bool MuteButton::hitTest(int x, int y)
 {
-    float circum = 96.0f;
+    float circum = getWidth();
     float radius = circum / 2.0f;
 
     float offsetX = (getWidth() - circum) * 0.5f;
