@@ -159,11 +159,6 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         levelSmoothed.setTargetValue(NEGATIVE_INF_THRESH);
     }
 
-    rmsLeft = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0, 0, buffer.getNumSamples()));
-    rmsRight = juce::Decibels::gainToDecibels(buffer.getRMSLevel(1, 0, buffer.getNumSamples()));
-
-
-
     // Because we are applying a gain ramp across the buffer,
     // process all channels per sample (vs all samples per channels).
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
@@ -174,6 +169,10 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
             juce::ignoreUnused(channelData);
         }
     }
+
+    // Calculate values for RMS meter
+    rmsLeft = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0, 0, buffer.getNumSamples()));
+    rmsRight = juce::Decibels::gainToDecibels(buffer.getRMSLevel(1, 0, buffer.getNumSamples()));
 }
 
 //==============================================================================
