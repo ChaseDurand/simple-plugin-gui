@@ -1,4 +1,3 @@
-// #include <juce_gui_basics/juce_gui_basics.h>
 #include "CustomLookAndFeel.h"
 
 RotaryDecibelSliderLookAndFeel::RotaryDecibelSliderLookAndFeel() : LookAndFeel_V4(){
@@ -17,20 +16,12 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     auto rw = radius * 2.0f;
     auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
     float innerRadiusPercent = 0.76f;
+    float innerRadius = radius * innerRadiusPercent;
     juce::Path p;
 
-    // Drop shadow
-    // float shadowWidth = 1.8f * radius;
-    // int shadowRadius = (int)(2.0f * radius);
-    // auto shadow = juce::DropShadow(juce::Colours::black, shadowRadius, juce::Point<int>(0,0));
-    // p.clear();
-    // p.startNewSubPath(centreX - 0.5f * shadowWidth, ry + 0.5f * radius);
-    // p.addEllipse(centreX - 0.5f * shadowWidth,  ry + 0.5f * radius, shadowWidth, shadowWidth);
-    // shadow.drawForPath(g, p);
-
     // Outer circle gradient
-    g.setGradientFill(juce::ColourGradient(juce::Colour(114, 114, 114), centreX, ry,
-                                            juce::Colour(32, 32, 32), centreX, centreY + radius, false));
+    g.setGradientFill(juce::ColourGradient(juce::Colour(80, 80, 80), centreX, ry,
+                                            juce::Colour(26, 26, 26), centreX, centreY + radius, false));
     g.fillEllipse (rx, ry, rw, rw);
 
     // Outer cirlce outline
@@ -38,11 +29,15 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     g.drawEllipse (rx, ry, rw, rw, 2.0f);
 
     // Inner circle fill
-    g.setColour (juce::Colour(62, 62, 62));
+    g.setGradientFill(juce::ColourGradient(juce::Colour(90, 90, 90), centreX + innerRadius, centreY - innerRadius,
+        juce::Colour(35, 35, 35), centreX - innerRadius, centreY + innerRadius, false));
     g.fillEllipse (rx + radius * (1.0f-innerRadiusPercent), ry + radius * (1.0f-innerRadiusPercent), rw * innerRadiusPercent, rw * innerRadiusPercent);
 
     // Inner ring outline
-    g.setColour (juce::Colours::black);
+    // g.setColour (juce::Colours::black);
+    g.setGradientFill(juce::ColourGradient(juce::Colour(30, 30, 30), centreX + innerRadius, centreY - innerRadius,
+        juce::Colour(0, 0, 0), centreX - innerRadius, centreY + innerRadius, false));
+
     g.drawEllipse (rx + radius * (1.0f-innerRadiusPercent), ry + radius * (1.0f-innerRadiusPercent), rw * innerRadiusPercent, rw * innerRadiusPercent, 2.0f);
 
     // Pointer border
@@ -149,7 +144,7 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
     {
         // Enabled
         // Inner circle
-        g.setGradientFill(juce::ColourGradient(juce::Colour(70, 70, 70), button.getWidth() * 0.5,
+        g.setGradientFill(juce::ColourGradient(juce::Colour(55, 55, 55), button.getWidth() * 0.5,
                                             button.getHeight() * 0.8f,
                                             juce::Colour(20, 20, 20), button.getWidth() * 0.5,
                                             button.getHeight() * 0.5f, true));
@@ -159,18 +154,18 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
             innerRadius * 2.0f, innerRadius * 2.0f);
         // Switch gradient
         g.setGradientFill(juce::ColourGradient(juce::Colour(70, 70, 70), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f - innerRadius,
+                                            button.getWidth() * 0.5f - 0.8f * innerRadius,
                                             juce::Colour(30, 30, 30), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f - 0.2 * innerRadius, false));
+                                            button.getWidth() * 0.5f, false));
         g.fillEllipse (button.getWidth() * 0.5f - switchRadius,
                     button.getWidth() * 0.5f - innerRadius,
                     switchRadius * 2.0f, switchRadius * 2.0f);
 
         // Switch outline
-        g.setGradientFill(juce::ColourGradient(juce::Colour(90, 90, 90), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f - innerRadius,
-                                            juce::Colour(70, 70, 70), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f, false));
+        g.setGradientFill(juce::ColourGradient(juce::Colour(50, 50, 50), button.getWidth() * 0.5,
+                                            button.getHeight() * 0.5f,
+                                            juce::Colour(100, 100, 100), button.getWidth() * 0.5,
+                                            button.getHeight() * 0.5f + innerRadius, false));
         g.drawEllipse(button.getWidth() * 0.5f - switchRadius,
                     button.getWidth() * 0.5f - innerRadius,
                     switchRadius * 2.0f, switchRadius * 2.0f, 1.0f);
@@ -179,7 +174,7 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
         g.setGradientFill(juce::ColourGradient(juce::Colour(250, 100, 100),
             button.getWidth() * 0.5f + lightRadius * 0.2f,
             lightOffsetY + 0.5f * lightRadius,
-            juce::Colour(170, 20, 10),  button.getWidth() * 0.5f - lightRadius,
+            juce::Colour(160, 15, 15),  button.getWidth() * 0.5f - lightRadius,
             lightOffsetY + 1.5f * lightRadius, true));
         g.fillEllipse (lightOffsetX, lightOffsetY,
             lightCircum, lightCircum);
@@ -200,18 +195,18 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
             innerRadius * 2.0f, innerRadius * 2.0f);
         // Switch gradient
         g.setGradientFill(juce::ColourGradient(juce::Colour(30, 30, 30), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f + 0.3f * innerRadius,
+                                            button.getWidth() * 0.5f + 0.2f * innerRadius,
                                             juce::Colour(70, 70, 70), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f + innerRadius, false));
+                                            button.getWidth() * 0.5f + 0.8f * innerRadius, false));
         g.fillEllipse (button.getWidth() * 0.5f - switchRadius,
                     button.getWidth() * 0.5f + innerRadius - 2.0f * switchRadius,
                     switchRadius * 2.0f, switchRadius * 2.0f);
 
         // Switch outline
-        g.setGradientFill(juce::ColourGradient(juce::Colour(90, 90, 90), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f - innerRadius,
-                                            juce::Colour(70, 70, 70), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f, false));
+        g.setGradientFill(juce::ColourGradient(juce::Colour(100, 100, 100), button.getWidth() * 0.5,
+                                            button.getHeight() * 0.5f - innerRadius,
+                                            juce::Colour(50, 50, 50), button.getWidth() * 0.5,
+                                            button.getHeight() * 0.5f, false));
         g.drawEllipse(button.getWidth() * 0.5f - switchRadius,
                     button.getWidth() * 0.5f + innerRadius - 2.0f * switchRadius,
                     switchRadius * 2.0f, switchRadius * 2.0f, 1.0f);

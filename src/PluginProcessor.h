@@ -7,6 +7,9 @@
 #define NEGATIVE_INF_THRESH -60.0f // db theshold for silence
 #define MUTE_ID "MUTE"
 #define MUTE_NAME "Mute"
+#define RADIO_ID_CHANNEL 01
+#define CHANNEL_ID "CHANNEL"
+#define CHANNEL_NAME "Channel"
 
 //==============================================================================
 class SimplePluginAudioProcessor : public juce::AudioProcessor
@@ -48,13 +51,17 @@ public:
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
     
-    juce::AudioProcessorValueTreeState apvts; //previously treeState
+    juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
-    // float previousGain;
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> levelSmoothed = 1.0;
     double gainSmoothingLengthSeconds = 0.05;
 
+    float getRmsValue(const int channel) const;
+
 private:
     //==============================================================================
+
+    float rmsLeft, rmsRight;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SimplePluginAudioProcessor)
 };

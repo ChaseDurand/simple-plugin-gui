@@ -3,9 +3,11 @@
 #include "PluginProcessor.h"
 #include "RotaryDecibelSlider.h"
 #include "MuteButton.h"
+#include "HorizontalMeter.h"
 
 //==============================================================================
-class SimplePluginAudioProcessorEditor : public juce::AudioProcessorEditor
+class SimplePluginAudioProcessorEditor : public juce::AudioProcessorEditor,
+                                         public juce::Timer
 {
 public:
     explicit SimplePluginAudioProcessorEditor(SimplePluginAudioProcessor &);
@@ -14,14 +16,22 @@ public:
     //==============================================================================
     void paint(juce::Graphics &) override;
     void resized() override;
+    void timerCallback() override;
 
 private:
     // juce::Label rotaryDecibelLabel;
     RotaryDecibelSlider gainKnob;
     MuteButton muteButton;
 
+    juce::ToggleButton buttonChannelL, buttonChannelC, buttonChannelR;
+
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> muteButtonAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonLAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonCAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonRAttachment;
+
+    HorizontalMeter meterL, meterR;
 
     
     

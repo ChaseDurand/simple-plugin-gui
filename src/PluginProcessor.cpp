@@ -159,6 +159,11 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         levelSmoothed.setTargetValue(NEGATIVE_INF_THRESH);
     }
 
+    rmsLeft = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0, 0, buffer.getNumSamples()));
+    rmsRight = juce::Decibels::gainToDecibels(buffer.getRMSLevel(1, 0, buffer.getNumSamples()));
+
+
+
     // Because we are applying a gain ramp across the buffer,
     // process all channels per sample (vs all samples per channels).
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
@@ -205,8 +210,22 @@ juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
     return new SimplePluginAudioProcessor();
 }
 
+float SimplePluginAudioProcessor::getRmsValue(const int channel) const
+{
+    jassert(channel == 0 || channel == 1);
+    if (channel == 0)
+        return rmsLeft;
+    if (channel == 1)
+        return rmsRight;
+    return 0.f;
+}
+
+
 juce::AudioProcessorValueTreeState::ParameterLayout SimplePluginAudioProcessor::createParameters(){
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+
+    parameters.push_back(std::make_unique<juce::AudioParameterBool>
+        (MUTE_ID, MUTE_NAME, false));
     
     // Calculate skew value for gain knob to set 0dB at 12 o'clock.
     float gainCenterPoint = 0.0f;
@@ -233,9 +252,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimplePluginAudioProcessor::
     nullptr
     ));
 
-    parameters.push_back
-        (std::make_unique<juce::AudioParameterBool>
-            (MUTE_ID, MUTE_NAME, false));
+
+
+    parameters.push_back(std::make_unique<juce::AudioParameterChoice>
+        (CHANNEL_ID,
+		CHANNEL_NAME,
+		juce::StringArray {"Left", "Center", "Right"},
+		1));
 
     return { parameters.begin(), parameters.end() };
 }
