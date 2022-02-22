@@ -55,13 +55,14 @@ public:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> levelSmoothed = 1.0;
     double gainSmoothingLengthSeconds = 0.05;
+    double meterSmoothingLengthSeconds = 0.5;
 
     float getRmsValue(const int channel) const;
 
 private:
     //==============================================================================
 
-    float rmsLeft, rmsRight;
+    juce::LinearSmoothedValue<float> rmsLeft, rmsRight;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SimplePluginAudioProcessor)
 };

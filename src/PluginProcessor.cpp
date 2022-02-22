@@ -88,8 +88,11 @@ void SimplePluginAudioProcessor::changeProgramName(int index, const juce::String
 //==============================================================================
 void SimplePluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+    rmsLeft.reset(sampleRate, meterSmoothingLengthSeconds);
+    rmsRight.reset(sampleRate, meterSmoothingLengthSeconds);
+    rmsLeft.setCurrentAndTargetValue(NEGATIVE_INF_THRESH);
+    rmsRight.setCurrentAndTargetValue(NEGATIVE_INF_THRESH);
+
     juce::ignoreUnused(sampleRate, samplesPerBlock);
     levelSmoothed.reset(sampleRate, gainSmoothingLengthSeconds);
 }
@@ -170,9 +173,34 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         }
     }
 
-    // Calculate values for RMS meter
-    rmsLeft = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0, 0, buffer.getNumSamples()));
-    rmsRight = juce::Decibels::gainToDecibels(buffer.getRMSLevel(1, 0, buffer.getNumSamples()));
+    // Increment rms smoothed value.
+    rmsLeft.skip(buffer.getNumSamples());
+    rmsRight.skip(buffer.getNumSamples());
+
+    // Calculate values for RMS meter.
+    // Immediately move meter when values increase smooth with decrease.
+    const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0, 0, buffer.getNumSamples()));
+    {
+        if (value < rmsLeft.getCurrentValue())
+        {
+            rmsLeft.setTargetValue(value);
+        }
+        else
+        {
+            rmsLeft.setCurrentAndTargetValue(value);
+        }
+    }
+    {
+        const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(1, 0, buffer.getNumSamples()));
+        if (value < rmsRight.getCurrentValue())
+        {
+            rmsRight.setTargetValue(value);
+        }
+        else
+        {
+            rmsRight.setCurrentAndTargetValue(value);
+        }
+    }
 }
 
 //==============================================================================
@@ -213,9 +241,9 @@ float SimplePluginAudioProcessor::getRmsValue(const int channel) const
 {
     jassert(channel == 0 || channel == 1);
     if (channel == 0)
-        return rmsLeft;
+        return rmsLeft.getCurrentValue();
     if (channel == 1)
-        return rmsRight;
+        return rmsRight.getCurrentValue();
     return 0.f;
 }
 
