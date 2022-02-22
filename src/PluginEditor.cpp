@@ -52,11 +52,12 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     addAndMakeVisible(meterL);
     addAndMakeVisible(meterR);
     startTimerHz(24);
-
-
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize(520, 260);
+    
+    double ratio = 2.0;
+    setResizable(true, true);
+    setResizeLimits(390, 390 / ratio, 1560, 1560 / ratio);
+    getConstrainer()->setFixedAspectRatio(ratio);
+    setSize(520, 520 / ratio);
 }
 
 SimplePluginAudioProcessorEditor::~SimplePluginAudioProcessorEditor()
