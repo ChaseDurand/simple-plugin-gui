@@ -20,25 +20,34 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     muteButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
         processorRef.apvts, MUTE_ID, muteButton);
 
-    buttonChannelL.setRadioGroupId(RADIO_ID_CHANNEL);
-    buttonChannelC.setRadioGroupId(RADIO_ID_CHANNEL);
-    buttonChannelR.setRadioGroupId(RADIO_ID_CHANNEL);
+    channelButtonAttachment = std::make_unique<juce::ParameterAttachment>(*processorRef.apvts.getParameter(CHANNEL_ID),
+        [this](float value)
+    {
+            int index = std::floor (value / channelButtons.size());
+            if (juce::isPositiveAndBelow (index, channelButtons.size())){
+                channelButtons.at (index) -> setToggleState (true, juce::NotificationType::dontSendNotification);
+            }   
+    }, nullptr);
+    
+    auto makeButton = [this](auto name, int index)
+    {
+        auto button = std::make_unique<juce::TextButton>(name);
+        button->setClickingTogglesState (true);
+        button->setRadioGroupId (RADIO_ID_CHANNEL);
+        addAndMakeVisible (button.get());
+        button->onStateChange = [&, index]
+        {
+            if (button->getToggleState())
+            {
+                channelButtonAttachment->setValueAsCompleteGesture(index);
+            }
+        };
+        return button;
+    };
 
-    // buttonChannelL.onClick() = [this](){ 
-    //     this.setToggleState(true, juce::NotificationType::sendNotification);
-    // };
-
-    // channelButtonLAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
-    //     processorRef.apvts, CHANNEL_ID, buttonChannelL);
-
-    // channelButtonCAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
-    //     processorRef.apvts, CHANNEL_ID, buttonChannelC);
-
-    buttonChannelC.setToggleState(true, juce::NotificationType::sendNotification);
-
-    addAndMakeVisible(buttonChannelL);
-    addAndMakeVisible(buttonChannelC);
-    addAndMakeVisible(buttonChannelR);
+    channelButtons.push_back(makeButton ("Foo", 0));
+    channelButtons.push_back(makeButton ("Bar", 1));
+    channelButtons.push_back(makeButton ("Baz", 2));
 
     addAndMakeVisible(meterL);
     addAndMakeVisible(meterR);
@@ -69,11 +78,15 @@ void SimplePluginAudioProcessorEditor::resized()
     // subcomponents in your editor..
     muteButton.setBounds(getWidth() * 0.04f, getHeight() / 2 - 50, 80, 80);
     gainKnob.setBounds(getWidth() * 0.22f, getHeight() / 2 - 60, 100, 120);
-    buttonChannelL.setBounds(getWidth() * 0.5f, getHeight() / 2 - 60, 100, 120);
-    buttonChannelC.setBounds(getWidth() * 0.6f, getHeight() / 2 - 60, 100, 120);
-    buttonChannelR.setBounds(getWidth() * 0.7f, getHeight() / 2 - 60, 100, 120);
-    meterL.setBounds(2, 2, 200, 15);
-    meterR.setBounds(2, 20, 200, 15);
+    meterL.setBounds(getWidth() * 0.9f, 20, 15, 200);
+    meterR.setBounds(getWidth() * 0.9f + 20, 20, 15, 200);
+
+
+    // if (channelButtons.size() == 3){
+    //     channelButtons[0].get()->setBounds(getWidth() * 0.5f, getHeight() / 2 - 60, 60, 30);
+    //     channelButtons[1].get()->setBounds(getWidth() * 0.6f, getHeight() / 2 - 60, 60, 30);
+    //     channelButtons[2].get()->setBounds(getWidth() * 0.7f, getHeight() / 2 - 60, 60, 30);
+    // }
 }
 
 void SimplePluginAudioProcessorEditor::timerCallback()

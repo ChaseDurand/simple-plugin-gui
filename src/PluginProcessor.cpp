@@ -256,8 +256,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimplePluginAudioProcessor::
     parameters.push_back(std::make_unique<juce::AudioParameterChoice>
         (CHANNEL_ID,
 		CHANNEL_NAME,
-		juce::StringArray {"Left", "Center", "Right"},
-		1));
+		juce::StringArray {"Foo", "Bar", "Baz"},
+		0));
 
     return { parameters.begin(), parameters.end() };
 }

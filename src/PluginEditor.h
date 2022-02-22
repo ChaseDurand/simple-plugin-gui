@@ -3,7 +3,7 @@
 #include "PluginProcessor.h"
 #include "RotaryDecibelSlider.h"
 #include "MuteButton.h"
-#include "HorizontalMeter.h"
+#include "VerticalMeter.h"
 
 //==============================================================================
 class SimplePluginAudioProcessorEditor : public juce::AudioProcessorEditor,
@@ -23,15 +23,17 @@ private:
     RotaryDecibelSlider gainKnob;
     MuteButton muteButton;
 
-    juce::ToggleButton buttonChannelL, buttonChannelC, buttonChannelR;
+    // juce::ToggleButton buttonChannelL, buttonChannelC, buttonChannelR;
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> muteButtonAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonLAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonCAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonRAttachment;
+    // std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonLAttachment;
+    // std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonCAttachment;
+    // std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonRAttachment;
+    std::unique_ptr<juce::ParameterAttachment> channelButtonAttachment;
+    std::vector<std::unique_ptr<juce::Button>> channelButtons;
 
-    HorizontalMeter meterL, meterR;
+    VerticalMeter meterL, meterR;
 
     
     
