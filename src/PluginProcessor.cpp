@@ -179,8 +179,8 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
 
     // Calculate values for RMS meter.
     // Immediately move meter when values increase smooth with decrease.
-    const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0, 0, buffer.getNumSamples()));
     {
+        const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0, 0, buffer.getNumSamples()));
         if (value < rmsLeft.getCurrentValue())
         {
             rmsLeft.setTargetValue(value);
@@ -217,17 +217,41 @@ juce::AudioProcessorEditor *SimplePluginAudioProcessor::createEditor()
 //==============================================================================
 void SimplePluginAudioProcessor::getStateInformation(juce::MemoryBlock &destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    auto editor = apvts.state.getOrCreateChildWithName("editor", nullptr);
+    editor.setProperty("size-x", editorSize.x, nullptr);
+    editor.setProperty("size-y", editorSize.y, nullptr);
+    juce::MemoryOutputStream(destData, false);
     juce::ignoreUnused(destData);
 }
 
 void SimplePluginAudioProcessor::setStateInformation(const void *data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    auto tree = juce::ValueTree::readFromData(data, size_t(sizeInBytes));
+    if(tree.isValid())
+    {
+        apvts.state = tree;
+        auto editor = apvts.state.getChildWithName("editor");
+        if(editor.isValid())
+        {
+            editorSize.setX(editor.getProperty("size-x", 520));
+            editorSize.setY(editor.getProperty("size-y", 520 / 2.0));
+            if(auto* thisEditor = getActiveEditor())
+            {
+                thisEditor->setSize(editorSize.x, editorSize.y);
+            }
+        }
+    }
     juce::ignoreUnused(data, sizeInBytes);
+}
+
+juce::Point<int> SimplePluginAudioProcessor::getSavedSize() const
+{
+    return editorSize;
+}
+
+void SimplePluginAudioProcessor::setSavedSize(const juce::Point<int>& size)
+{
+    editorSize = size;
 }
 
 //==============================================================================

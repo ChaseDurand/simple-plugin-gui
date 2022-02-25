@@ -50,6 +50,8 @@ public:
     //==============================================================================
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
+    juce::Point<int> getSavedSize() const;
+    void setSavedSize(const juce::Point<int>& size);
     
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
@@ -63,6 +65,8 @@ private:
     //==============================================================================
 
     juce::LinearSmoothedValue<float> rmsLeft, rmsRight;
+
+    juce::Point<int> editorSize = {520, 260};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SimplePluginAudioProcessor)
 };

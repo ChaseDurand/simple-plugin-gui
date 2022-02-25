@@ -6,12 +6,12 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     : AudioProcessorEditor(&p), processorRef(p)
 {
     juce::ignoreUnused(processorRef);
-    gainKnob.setSliderStyle
-        (juce::Slider::SliderStyle::RotaryVerticalDrag);
-    gainKnob.setRange(NEGATIVE_INF_THRESH, GAIN_MAX, 0.1f);
-    gainKnob.setTextBoxStyle(juce::Slider::TextBoxBelow,
-                                                        true, 80, 30);
-    gainKnob.setDoubleClickReturnValue(true, 0.0f);
+
+    gainKnob.setColour(juce::Slider::textBoxTextColourId, juce::Colour(0, 0, 0));
+    gainKnob.setColour(juce::Slider::textBoxOutlineColourId, juce::Colour(72, 72, 72));
+    gainKnob.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(110, 221, 202));
+
+
     addAndMakeVisible(gainKnob);
     gainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         processorRef.apvts, GAIN_ID, gainKnob);
@@ -53,11 +53,14 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     addAndMakeVisible(meterR);
     startTimerHz(24);
     
+    juce::Point<int> size = processorRef.getSavedSize();
     double ratio = 2.0;
     setResizable(true, true);
-    setResizeLimits(390, 390 / ratio, 1560, 1560 / ratio);
+    setResizeLimits(390, 390 / ratio, 3000, 3000 / ratio);
     getConstrainer()->setFixedAspectRatio(ratio);
-    setSize(520, 520 / ratio);
+    setSize(size.x, size.y);
+
+    setWantsKeyboardFocus(true);
 }
 
 SimplePluginAudioProcessorEditor::~SimplePluginAudioProcessorEditor()
@@ -67,27 +70,29 @@ SimplePluginAudioProcessorEditor::~SimplePluginAudioProcessorEditor()
 //==============================================================================
 void SimplePluginAudioProcessorEditor::paint(juce::Graphics &g)
 {
-    g.setGradientFill(juce::ColourGradient(juce::Colour(50, 50, 50), 0, 0,
-                                           juce::Colour(20, 20, 20), getWidth(),
-                                           getHeight(), false));
-    g.fillAll();
+    g.fillAll(juce::Colour(35, 35, 35));
 }
 
 void SimplePluginAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
-    muteButton.setBounds(getWidth() * 0.04f, getHeight() / 2 - 50, 80, 80);
-    gainKnob.setBounds(getWidth() * 0.22f, getHeight() / 2 - 60, 100, 120);
-    meterL.setBounds(getWidth() * 0.9f, 20, 15, 200);
-    meterR.setBounds(getWidth() * 0.9f + 20, 20, 15, 200);
+    processorRef.setSavedSize({getWidth(), getHeight()});
 
+    float widthUnit = getWidth() * 0.2;
+
+    muteButton.setBounds(0, (getHeight() - widthUnit * 0.9f) * 0.5f, widthUnit * 0.9f, widthUnit * 0.9f);
+    gainKnob.setBounds(widthUnit * 1, (getHeight() - widthUnit * 0.9f) * 0.5f, widthUnit * 0.9f, widthUnit * 0.9f);
 
     // if (channelButtons.size() == 3){
     //     channelButtons[0].get()->setBounds(getWidth() * 0.5f, getHeight() / 2 - 60, 60, 30);
     //     channelButtons[1].get()->setBounds(getWidth() * 0.6f, getHeight() / 2 - 60, 60, 30);
     //     channelButtons[2].get()->setBounds(getWidth() * 0.7f, getHeight() / 2 - 60, 60, 30);
     // }
+
+    float meterHeightPercent = 0.8;
+    float meterHeight = getHeight() * meterHeightPercent;
+    float meterMargin = getHeight() * (1 - meterHeightPercent) * 0.5;
+    meterL.setBounds(widthUnit * 4.2, meterMargin, widthUnit * 0.26, meterHeight);
+    meterR.setBounds(widthUnit * 4.5, meterMargin, widthUnit * 0.26, meterHeight);
 }
 
 void SimplePluginAudioProcessorEditor::timerCallback()

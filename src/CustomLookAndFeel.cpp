@@ -1,96 +1,92 @@
 #include "CustomLookAndFeel.h"
 
-RotaryDecibelSliderLookAndFeel::RotaryDecibelSliderLookAndFeel() : LookAndFeel_V4(){
+RotaryDecibelSliderLookAndFeel::RotaryDecibelSliderLookAndFeel() : LookAndFeel_V4()
+{
     setColour (juce::Slider::thumbColourId, juce::Colours::black);
 }
 
+juce::Slider::SliderLayout RotaryDecibelSliderLookAndFeel::getSliderLayout(juce::Slider& slider)
+{
+    juce::Rectangle<int> localBounds = slider.getLocalBounds();
+    juce::Slider::SliderLayout layout;
+    layout.textBoxBounds = localBounds.withY(-1);
+    layout.sliderBounds = localBounds;
+    return layout;
+}
+
+
 void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
     int width, int height, float sliderPos, const float rotaryStartAngle, const float
-    rotaryEndAngle, juce::Slider&){
-    
-    auto radius = (float) (width / 2) * (0.7f);
+    rotaryEndAngle, juce::Slider& slider)
+{
+
+    float outerMargin = width * 0.03f;
+    juce::Rectangle<float> bounds = juce::Rectangle<float>
+        (x, y, width, height).reduced(outerMargin);
+    float radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) * 0.35f;
     auto centreX = (float) x + (float) width * 0.5f;
     auto centreY = (float) y + (float) width * 0.5f;
     auto rx = centreX - radius;
     auto ry = centreY - radius;
     auto rw = radius * 2.0f;
     auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-    float innerRadiusPercent = 0.76f;
-    float innerRadius = radius * innerRadiusPercent;
     juce::Path p;
+    float arcWidth = radius * 0.2f;
+    float arcRadius = radius + arcWidth * 1.2f;
 
-    // Outer circle gradient
-    g.setGradientFill(juce::ColourGradient(juce::Colour(80, 80, 80), centreX, ry,
-                                            juce::Colour(26, 26, 26), centreX, centreY + radius, false));
+    juce::Colour dialColour = juce::Colours::white;
+    juce::Colour arcBgColour = slider.findColour(juce::Slider::textBoxOutlineColourId);
+    juce::Colour arcFgColour = slider.findColour(juce::Slider::rotarySliderFillColourId);
+    
+
+    // Outer circle fill
+    g.setColour(dialColour);
     g.fillEllipse (rx, ry, rw, rw);
 
-    // Outer cirlce outline
-    g.setColour (juce::Colours::black);
-    g.drawEllipse (rx, ry, rw, rw, 2.0f);
+    // Arc
+    {
+        // Outer arc background
+        
+        p.clear();
+        p.startNewSubPath(centreX + arcRadius * sin(rotaryStartAngle), centreY - arcRadius * cos(rotaryStartAngle));
+        p.addCentredArc(centreX, centreY, arcRadius, arcRadius,
+            0.0f, rotaryStartAngle, rotaryEndAngle, false);
+        g.setColour(arcBgColour);
+        g.strokePath(p, juce::PathStrokeType(arcWidth, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded));
 
-    // Inner circle fill
-    g.setGradientFill(juce::ColourGradient(juce::Colour(90, 90, 90), centreX + innerRadius, centreY - innerRadius,
-        juce::Colour(35, 35, 35), centreX - innerRadius, centreY + innerRadius, false));
-    g.fillEllipse (rx + radius * (1.0f-innerRadiusPercent), ry + radius * (1.0f-innerRadiusPercent), rw * innerRadiusPercent, rw * innerRadiusPercent);
+        // Outer arc foreground glow
+        p.clear();
+        p.startNewSubPath(centreX + arcRadius * sin(rotaryStartAngle), centreY - arcRadius * cos(rotaryStartAngle));
+        p.addCentredArc(centreX, centreY, arcRadius, arcRadius,
+            0.0f, rotaryStartAngle, angle, false);
+        g.setColour(arcFgColour);
+        g.strokePath(p, juce::PathStrokeType(arcWidth, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded));
+    }
 
-    // Inner ring outline
-    // g.setColour (juce::Colours::black);
-    g.setGradientFill(juce::ColourGradient(juce::Colour(30, 30, 30), centreX + innerRadius, centreY - innerRadius,
-        juce::Colour(0, 0, 0), centreX - innerRadius, centreY + innerRadius, false));
+    // Pointer
+    {  
+        float pointerWidth = radius * 0.3f;
+        float pointerLength = arcRadius * 1.2f;
+        // Pointer border
+        p.clear();
+        p.addRectangle(-pointerWidth * 0.5f, -pointerLength, pointerWidth, pointerLength);
+        p.applyTransform(juce::AffineTransform::rotation(angle).translated (centreX, centreY));
+        g.setColour(dialColour);
+        g.fillPath(p);
+    }
 
-    g.drawEllipse (rx + radius * (1.0f-innerRadiusPercent), ry + radius * (1.0f-innerRadiusPercent), rw * innerRadiusPercent, rw * innerRadiusPercent, 2.0f);
-
-    // Pointer border
-    auto pointerLength = radius * 0.8f;
-    auto pointerThickness = 9.0f;
-    p.clear();
-    p.addRectangle(-pointerThickness * 0.5f, -radius, pointerThickness, pointerLength);
-    p.applyTransform(juce::AffineTransform::rotation (angle).translated (centreX, centreY));
-    g.setColour(juce::Colours::black);
-    g.fillPath(p);
-
-    // Pointer inner color
-    p.clear();
-    pointerLength = radius * 0.66f;
-    pointerThickness *= 0.5f;
-    p.addRectangle(-pointerThickness * 0.5f, -radius * 0.93f, pointerThickness, pointerLength);
-    p.applyTransform(juce::AffineTransform::rotation (angle).translated (centreX, centreY));
-    g.setColour(juce::Colour(110, 221, 202));
-    g.fillPath(p);
-
-    // Outer arc background
-    float arcSize = 1.3f * radius;
-    p.clear();
-    p.startNewSubPath(centreX + arcSize * sin(rotaryStartAngle), centreY - arcSize * cos(rotaryStartAngle));
-    p.addCentredArc(centreX, centreY, arcSize, arcSize,
-        0.0f, rotaryStartAngle, rotaryEndAngle, false);
-    g.setColour(juce::Colour(72, 72, 72));
-    g.strokePath(p, juce::PathStrokeType(4.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded));
-
-    // Outer arc foreground glow
-    p.clear();
-    p.startNewSubPath(centreX + arcSize * sin(rotaryStartAngle), centreY - arcSize * cos(rotaryStartAngle));
-    p.addCentredArc(centreX, centreY, arcSize, arcSize,
-        0.0f, rotaryStartAngle, angle, false);
-    g.setColour(juce::Colour(110, 221, 202));
-    g.strokePath(p, juce::PathStrokeType(4.0f, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded));
 
 
     return;
 }
 
-juce::Label* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& slider)
+RisizableTextBox* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& slider)
 {
-    auto* l = juce::LookAndFeel_V2::createSliderTextBox (slider);
-    if (getCurrentColourScheme() == juce::LookAndFeel_V4::getGreyColourScheme() && (slider.getSliderStyle() == juce::Slider::LinearBar
-                                                                               || slider.getSliderStyle() == juce::Slider::LinearBarVertical))
-    {
-        l->setColour (juce::Label::textColourId, juce::Colours::black.withAlpha (0.7f));
-    }
-    
-    l->setColour (juce::Label::outlineColourId, juce::Colours::black.withAlpha(0.0f)); // Make label transparant
-    l->setColour (juce::Label::textColourId, juce::Colour(170, 170, 170));
-    return l;
+    auto* textBox = new RisizableTextBox();
+
+    textBox->setColour (juce::Label::textColourId,            slider.findColour (juce::Slider::textBoxTextColourId));
+    textBox->setColour (juce::Label::textWhenEditingColourId, slider.findColour (juce::Slider::textBoxTextColourId));
+    return textBox; 
 }
 
 ///////////////////////////////////////
@@ -102,130 +98,35 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
     bool shouldDrawButtonAsHighlighted,
     bool shouldDrawButtonAsDown)
 {
-    float outerRadiusPercent = 0.94f;
-    float outerRadius = button.getWidth() * outerRadiusPercent * 0.5f;
-    float innerRadiusPercent = 0.76f;
-    float innerRadius =  button.getWidth() * innerRadiusPercent * 0.5f;
-    float switchRadiusPercent = 0.64f;
-    float switchRadius = button.getWidth() * switchRadiusPercent * 0.5f;
+    float outerMargin = w * 0.03f;
+    juce::Rectangle<float> bounds = juce::Rectangle<float>
+        (x, y, button.getWidth(), button.getHeight()).reduced(outerMargin);
+    float radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) * 0.35f;
+    float outerRadius = radius * 1.44f;
+    float innerRadius = radius / 1.44f;
 
-    float offsetX = (button.getWidth() - outerRadius * 2.0f) * 0.5f;
-    float offsetY = (button.getHeight() - outerRadius * 2.0f) * 0.5f;
+    // Outer circle
+    g.setColour(juce::Colours::white);
+    g.fillEllipse (button.getWidth() * 0.5f - radius,
+        button.getHeight() * 0.5f - radius,
+        radius * 2.0f, radius * 2.0f);
 
-    float offsetXinner = (button.getWidth() - (outerRadius * 2.0f) * innerRadiusPercent) * 0.5f;
-    float offsetYinner = (button.getHeight() - (outerRadius * 2.0f) * innerRadiusPercent) * 0.5f;
-
-    float centreX = x + 0.5 * w;
-    float centreY = y + 0.5 * h;
-
-    // Outer circle gradient
-    g.setGradientFill(juce::ColourGradient(juce::Colour(80, 80, 80), centreX, y,
-                                            juce::Colour(32, 32, 32), centreX, centreY + outerRadius, false));
-    g.fillEllipse (offsetX, offsetY, (outerRadius * 2.0f), (outerRadius * 2.0f));
-
-    // Outer circle outline
-    g.setColour(juce::Colours::black);
-    g.drawEllipse (offsetX, offsetY,
-        (outerRadius * 2.0f), (outerRadius * 2.0f), 2.0f);
-
-
-    // Inner circle outline
-    g.setColour(juce::Colours::black);
-    g.drawEllipse (button.getWidth() * 0.5f - innerRadius,
-        button.getWidth() * 0.5f - innerRadius,
-        innerRadius * 2.0f, innerRadius * 2.0f, 2.0f);
-
-    // On/off LED
-    float lightCircum = 16.0f;
-    float lightRadius = lightCircum * 0.5f;
-    float lightOffsetX = (button.getWidth() - lightCircum) * 0.5f;
-    float lightOffsetY = 16.0f;
     if (ticked)
     {
         // Enabled
-        // Inner circle
-        g.setGradientFill(juce::ColourGradient(juce::Colour(55, 55, 55), button.getWidth() * 0.5,
-                                            button.getHeight() * 0.8f,
-                                            juce::Colour(20, 20, 20), button.getWidth() * 0.5,
-                                            button.getHeight() * 0.5f, true));
-
-        g.fillEllipse (button.getWidth() * 0.5f - innerRadius,
-            button.getWidth() * 0.5f - innerRadius,
-            innerRadius * 2.0f, innerRadius * 2.0f);
-        // Switch gradient
-        g.setGradientFill(juce::ColourGradient(juce::Colour(70, 70, 70), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f - 0.8f * innerRadius,
-                                            juce::Colour(30, 30, 30), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f, false));
-        g.fillEllipse (button.getWidth() * 0.5f - switchRadius,
-                    button.getWidth() * 0.5f - innerRadius,
-                    switchRadius * 2.0f, switchRadius * 2.0f);
-
-        // Switch outline
-        g.setGradientFill(juce::ColourGradient(juce::Colour(50, 50, 50), button.getWidth() * 0.5,
-                                            button.getHeight() * 0.5f,
-                                            juce::Colour(100, 100, 100), button.getWidth() * 0.5,
-                                            button.getHeight() * 0.5f + innerRadius, false));
-        g.drawEllipse(button.getWidth() * 0.5f - switchRadius,
-                    button.getWidth() * 0.5f - innerRadius,
-                    switchRadius * 2.0f, switchRadius * 2.0f, 1.0f);
-
         // Light color
-        g.setGradientFill(juce::ColourGradient(juce::Colour(250, 100, 100),
-            button.getWidth() * 0.5f + lightRadius * 0.2f,
-            lightOffsetY + 0.5f * lightRadius,
-            juce::Colour(160, 15, 15),  button.getWidth() * 0.5f - lightRadius,
-            lightOffsetY + 1.5f * lightRadius, true));
-        g.fillEllipse (lightOffsetX, lightOffsetY,
-            lightCircum, lightCircum);
-        // On/off LED outline
-        g.setColour(juce::Colours::black);
-        g.drawEllipse (lightOffsetX, lightOffsetY,
-            lightCircum, lightCircum, 1.0f);
+        g.setColour(juce::Colours::red);
     }
     else{
         // Disabled
-        // Inner circle
-        g.setGradientFill(juce::ColourGradient(juce::Colour(70, 70, 70), button.getWidth() * 0.5,
-                                            button.getHeight() * 0.2f,
-                                            juce::Colour(20, 20, 20), button.getWidth() * 0.5,
-                                            button.getHeight() * 0.5f, true));
-        g.fillEllipse (button.getWidth() * 0.5f - innerRadius,
-            button.getWidth() * 0.5f - innerRadius,
-            innerRadius * 2.0f, innerRadius * 2.0f);
-        // Switch gradient
-        g.setGradientFill(juce::ColourGradient(juce::Colour(30, 30, 30), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f + 0.2f * innerRadius,
-                                            juce::Colour(70, 70, 70), button.getWidth() * 0.5,
-                                            button.getWidth() * 0.5f + 0.8f * innerRadius, false));
-        g.fillEllipse (button.getWidth() * 0.5f - switchRadius,
-                    button.getWidth() * 0.5f + innerRadius - 2.0f * switchRadius,
-                    switchRadius * 2.0f, switchRadius * 2.0f);
-
-        // Switch outline
-        g.setGradientFill(juce::ColourGradient(juce::Colour(100, 100, 100), button.getWidth() * 0.5,
-                                            button.getHeight() * 0.5f - innerRadius,
-                                            juce::Colour(50, 50, 50), button.getWidth() * 0.5,
-                                            button.getHeight() * 0.5f, false));
-        g.drawEllipse(button.getWidth() * 0.5f - switchRadius,
-                    button.getWidth() * 0.5f + innerRadius - 2.0f * switchRadius,
-                    switchRadius * 2.0f, switchRadius * 2.0f, 1.0f);
-
-        float lightOffOffset = 1.55f;
-        float lightOffParalax = 0.9f;
         // Light color
-        g.setGradientFill(juce::ColourGradient(juce::Colour(200, 26, 47),
-            button.getWidth() * 0.5f + lightRadius * 0.2f,
-            lightOffsetY + 0.5f * lightRadius,
-            juce::Colour(80, 16, 8),  button.getWidth() * 0.5f - lightRadius,
-            lightOffsetY + 1.5f * lightRadius, true));
-        g.fillEllipse (lightOffsetX, lightOffsetY * lightOffOffset,
-            lightCircum, lightCircum * lightOffParalax);
-        // On/off LED outline
-        g.setColour(juce::Colours::black);
-        g.drawEllipse (lightOffsetX, lightOffsetY * lightOffOffset,
-            lightCircum, lightCircum * lightOffParalax, 1.0f);
+        g.setColour(juce::Colours::grey);
     }
+
+    // Inner circle/LED
+    g.fillEllipse (button.getWidth() * 0.5f - innerRadius,
+        button.getWidth() * 0.5f - innerRadius,
+        innerRadius * 2.0f, innerRadius * 2.0f);
 
     return;
 }
