@@ -1,5 +1,6 @@
 #include "MuteButton.h"
 #include "ComponentFocus.h"
+#include "CustomColours.h"
 
 MuteButton::MuteButton() : juce::ToggleButton(){
     setLookAndFeel(&muteButtonLookAndFeel);
@@ -15,6 +16,6 @@ void MuteButton::paint(juce::Graphics& g){
     // If component has keyboard focus, draw selector indicators
     if(hasKeyboardFocus(true)){
         juce::Rectangle<float> bounds = getLocalBounds().toFloat();
-        drawFocusOutline(bounds, g);
+        drawFocusOutline(bounds, g, findColour(MuteButton::ColourIds::borderColourId));
     } 
 }

@@ -69,14 +69,15 @@ juce_add_plugin(SimplePluginGUI
 # Finally, we supply a list of source files that will be built into the target. This is a standard
 # CMake command.
 
+file(GLOB GUI_FILES
+    "GUI/*.cpp"
+)
+
 target_sources(SimplePluginGUI
     PRIVATE
         PluginEditor.cpp
         PluginProcessor.cpp
-        RotaryDecibelSlider.cpp
-        MuteButton.cpp
-        CustomLookAndFeel.cpp
-        ResizableLabel.cpp)
+        ${GUI_FILES})
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use

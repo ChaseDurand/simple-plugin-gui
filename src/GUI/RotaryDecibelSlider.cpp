@@ -1,6 +1,7 @@
 #include "RotaryDecibelSlider.h"
 #include "ComponentFocus.h"
 #include "ResizableLabel.h"
+#include "CustomColours.h"
 
 RotaryDecibelSlider::RotaryDecibelSlider() : juce::Slider()
 {
@@ -22,7 +23,7 @@ void RotaryDecibelSlider::paint(juce::Graphics& g)
     // If component has keyboard focus, draw selector indicators
     if(hasKeyboardFocus(true)){
         juce::Rectangle<float> bounds = getLocalBounds().toFloat();
-        drawFocusOutline(bounds, g);
+        drawFocusOutline(bounds, g, CustomColours::offWhite);
     }
 }
 
@@ -46,11 +47,11 @@ void RotaryDecibelSlider::mouseDrag(const juce::MouseEvent& event)
     juce::Slider::mouseDrag(event);
     if(event.mods.isShiftDown())
     {
-        setVelocityModeParameters(0.1, 1, 0.1, false);
+        setVelocityModeParameters(0.08, 1, 0.1, false);
     }
     else
     {
-        setVelocityModeParameters(1.0, 1, 0.1, false);
+        setVelocityModeParameters(0.8, 1, 0.1, false);
     }
 }
 

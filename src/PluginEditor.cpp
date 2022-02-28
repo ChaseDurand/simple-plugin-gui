@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "GUI/CustomColours.h"
 
 //==============================================================================
 SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginAudioProcessor &p)
@@ -7,26 +8,32 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
 {
     juce::ignoreUnused(processorRef);
 
-    gainKnob.setColour(juce::Slider::textBoxTextColourId, juce::Colour(0, 0, 0));
-    gainKnob.setColour(juce::Slider::textBoxOutlineColourId, juce::Colour(72, 72, 72));
-    gainKnob.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(110, 221, 202));
-
-
-    addAndMakeVisible(gainKnob);
-    gainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        processorRef.apvts, GAIN_ID, gainKnob);
-
+    // Mute Button
+    muteButton.setColour(MuteButton::ColourIds::borderColourId, CustomColours::offWhite);
+    muteButton.setColour(MuteButton::ColourIds::tickDisabledColourId, CustomColours::grey);
+    muteButton.setColour(MuteButton::ColourIds::tickColourId, CustomColours::red);
+    
     addAndMakeVisible(muteButton);
     muteButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
         processorRef.apvts, MUTE_ID, muteButton);
 
+    // Gain Knob
+    gainKnob.setColour(juce::Slider::backgroundColourId , CustomColours::offWhite);
+    gainKnob.setColour(juce::Slider::textBoxTextColourId, juce::Colours::black);
+    gainKnob.setColour(juce::Slider::rotarySliderFillColourId, CustomColours::blue);
+    gainKnob.setColour(juce::Slider::rotarySliderOutlineColourId, CustomColours::grey);
+    addAndMakeVisible(gainKnob);
+    gainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        processorRef.apvts, GAIN_ID, gainKnob);
+
+    // Channel Selector
     channelButtonAttachment = std::make_unique<juce::ParameterAttachment>(*processorRef.apvts.getParameter(CHANNEL_ID),
         [this](float value)
     {
-            int index = std::floor (value / channelButtons.size());
-            if (juce::isPositiveAndBelow (index, channelButtons.size())){
-                channelButtons.at (index) -> setToggleState (true, juce::NotificationType::dontSendNotification);
-            }   
+            unsigned int index = static_cast<unsigned int>(std::floor(value / channelButtons.size()));
+            if (juce::isPositiveAndBelow(index, channelButtons.size())){
+                channelButtons[index] -> setToggleState (true, juce::NotificationType::dontSendNotification);
+            }
     }, nullptr);
     
     auto makeButton = [this](auto name, int index)
@@ -54,7 +61,7 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     startTimerHz(24);
     
     juce::Point<int> size = processorRef.getSavedSize();
-    double ratio = 2.0;
+    int ratio = 2;
     setResizable(true, true);
     setResizeLimits(390, 390 / ratio, 3000, 3000 / ratio);
     getConstrainer()->setFixedAspectRatio(ratio);
@@ -77,10 +84,20 @@ void SimplePluginAudioProcessorEditor::resized()
 {
     processorRef.setSavedSize({getWidth(), getHeight()});
 
-    float widthUnit = getWidth() * 0.2;
+    int outerMargin = (getWidth() * 0.03f);
+    juce::Rectangle<int> bounds = juce::Rectangle<int>
+        (getX(), getY(), getWidth(), getHeight()).reduced(outerMargin);
 
-    muteButton.setBounds(0, (getHeight() - widthUnit * 0.9f) * 0.5f, widthUnit * 0.9f, widthUnit * 0.9f);
-    gainKnob.setBounds(widthUnit * 1, (getHeight() - widthUnit * 0.9f) * 0.5f, widthUnit * 0.9f, widthUnit * 0.9f);
+    float widthUnit = bounds.getWidth() * 0.2f;
+
+    muteButton.setBounds(outerMargin,
+                         (getHeight() - widthUnit * 0.9f) * 0.5f,
+                         widthUnit * 0.9f,
+                         widthUnit * 0.9f);
+    gainKnob.setBounds(outerMargin + widthUnit * 1,
+                       (getHeight() - widthUnit * 0.9f) * 0.5f,
+                       widthUnit * 0.9f,
+                       widthUnit * 0.9f);
 
     // if (channelButtons.size() == 3){
     //     channelButtons[0].get()->setBounds(getWidth() * 0.5f, getHeight() / 2 - 60, 60, 30);
@@ -88,11 +105,17 @@ void SimplePluginAudioProcessorEditor::resized()
     //     channelButtons[2].get()->setBounds(getWidth() * 0.7f, getHeight() / 2 - 60, 60, 30);
     // }
 
-    float meterHeightPercent = 0.8;
-    float meterHeight = getHeight() * meterHeightPercent;
-    float meterMargin = getHeight() * (1 - meterHeightPercent) * 0.5;
-    meterL.setBounds(widthUnit * 4.2, meterMargin, widthUnit * 0.26, meterHeight);
-    meterR.setBounds(widthUnit * 4.5, meterMargin, widthUnit * 0.26, meterHeight);
+    float meterHeightPercent = 0.8f;
+    int meterHeight = getHeight() * meterHeightPercent;
+    int meterMargin =getHeight() * (1.0f - meterHeightPercent) * 0.5f;
+    meterL.setBounds((outerMargin + widthUnit * 4.2),
+                     meterMargin,
+                     (widthUnit * 0.26),
+                     meterHeight);
+    meterR.setBounds((outerMargin + widthUnit * 4.5),
+                     meterMargin,
+                     (widthUnit * 0.26),
+                     meterHeight);
 }
 
 void SimplePluginAudioProcessorEditor::timerCallback()

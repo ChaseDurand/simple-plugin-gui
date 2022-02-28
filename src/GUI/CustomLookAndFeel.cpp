@@ -1,4 +1,6 @@
 #include "CustomLookAndFeel.h"
+#include "CustomColours.h"
+#include "MuteButton.h"
 
 RotaryDecibelSliderLookAndFeel::RotaryDecibelSliderLookAndFeel() : LookAndFeel_V4()
 {
@@ -24,24 +26,24 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     juce::Rectangle<float> bounds = juce::Rectangle<float>
         (x, y, width, height).reduced(outerMargin);
     float radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) * 0.35f;
-    auto centreX = (float) x + (float) width * 0.5f;
-    auto centreY = (float) y + (float) width * 0.5f;
-    auto rx = centreX - radius;
-    auto ry = centreY - radius;
-    auto rw = radius * 2.0f;
+    float centreX = x + width * 0.5f;
+    float centreY = y + width * 0.5f;
     auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
     juce::Path p;
     float arcWidth = radius * 0.2f;
     float arcRadius = radius + arcWidth * 1.2f;
 
-    juce::Colour dialColour = juce::Colours::white;
-    juce::Colour arcBgColour = slider.findColour(juce::Slider::textBoxOutlineColourId);
-    juce::Colour arcFgColour = slider.findColour(juce::Slider::rotarySliderFillColourId);
+    juce::Colour dialColour = CustomColours::offWhite;
+    juce::Colour arcBgColour = CustomColours::grey;
+    juce::Colour arcFgColour = CustomColours::blue;
     
 
     // Outer circle fill
     g.setColour(dialColour);
-    g.fillEllipse (rx, ry, rw, rw);
+    g.fillEllipse (centreX - radius,
+                   centreY - radius,
+                   radius * 2,
+                   radius * 2);
 
     // Arc
     {
@@ -83,9 +85,8 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
 RisizableTextBox* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& slider)
 {
     auto* textBox = new RisizableTextBox();
-
-    textBox->setColour (juce::Label::textColourId,            slider.findColour (juce::Slider::textBoxTextColourId));
-    textBox->setColour (juce::Label::textWhenEditingColourId, slider.findColour (juce::Slider::textBoxTextColourId));
+    textBox->setColour ( juce::Label::textColourId, slider.findColour(juce::Slider::textBoxTextColourId));
+    // textBox->setColour (juce::Label::textWhenEditingColourId, slider.findColour (juce::Slider::textBoxTextColourId));
     return textBox; 
 }
 
@@ -106,7 +107,7 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
     float innerRadius = radius / 1.44f;
 
     // Outer circle
-    g.setColour(juce::Colours::white);
+    g.setColour(button.findColour(MuteButton::ColourIds::borderColourId));
     g.fillEllipse (button.getWidth() * 0.5f - radius,
         button.getHeight() * 0.5f - radius,
         radius * 2.0f, radius * 2.0f);
@@ -114,13 +115,11 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
     if (ticked)
     {
         // Enabled
-        // Light color
-        g.setColour(juce::Colours::red);
+        g.setColour(button.findColour(MuteButton::ColourIds::tickColourId));
     }
     else{
         // Disabled
-        // Light color
-        g.setColour(juce::Colours::grey);
+        g.setColour(button.findColour(MuteButton::ColourIds::tickDisabledColourId));
     }
 
     // Inner circle/LED

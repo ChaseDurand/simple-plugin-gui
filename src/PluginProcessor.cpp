@@ -165,7 +165,7 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     // Because we are applying a gain ramp across the buffer,
     // process all channels per sample (vs all samples per channels).
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
-        auto gainToApply = juce::Decibels::decibelsToGain((float)levelSmoothed.getNextValue(), NEGATIVE_INF_THRESH);
+        auto gainToApply = juce::Decibels::decibelsToGain(levelSmoothed.getNextValue(), NEGATIVE_INF_THRESH);
         for (int channel = 0; channel < totalNumInputChannels; ++channel){
             auto *channelData = buffer.getWritePointer(channel);
             channelData[sample] *= gainToApply;

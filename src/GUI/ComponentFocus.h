@@ -1,13 +1,13 @@
-static void drawFocusOutline(const juce::Rectangle<float>& bounds, juce::Graphics& g){
+static void drawFocusOutline(const juce::Rectangle<float>& bounds, juce::Graphics& g, juce::Colour c){
     float len    = juce::jmin (bounds.getHeight(), bounds.getWidth()) * 0.07f;
     float thick  = len * 0.5f;
 
-    juce::Point<float> topLeft     = bounds.getTopLeft();
-    juce::Point<float> topRight    = bounds.getTopRight();
-    juce::Point<float> bottomLeft  = bounds.getBottomLeft();
+    juce::Point<float> topLeft = bounds.getTopLeft();
+    juce::Point<float> topRight = bounds.getTopRight();
+    juce::Point<float> bottomLeft = bounds.getBottomLeft();
     juce::Point<float> bottomRight = bounds.getBottomRight();
 
-    g.setColour (juce::Colours::white);
+    g.setColour(c);
 
     juce::Path topLeftPath;
     topLeftPath.startNewSubPath (topLeft);

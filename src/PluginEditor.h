@@ -1,9 +1,9 @@
 #pragma once
 
 #include "PluginProcessor.h"
-#include "RotaryDecibelSlider.h"
-#include "MuteButton.h"
-#include "VerticalMeter.h"
+#include "GUI/RotaryDecibelSlider.h"
+#include "GUI/MuteButton.h"
+#include "GUI/VerticalMeter.h"
 
 //==============================================================================
 class SimplePluginAudioProcessorEditor : public juce::AudioProcessorEditor,
