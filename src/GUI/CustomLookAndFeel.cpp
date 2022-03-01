@@ -2,6 +2,10 @@
 #include "CustomColours.h"
 #include "MuteButton.h"
 
+///////////////////////////////////////
+//       Rotary Decibel Slider       //
+///////////////////////////////////////
+
 RotaryDecibelSliderLookAndFeel::RotaryDecibelSliderLookAndFeel() : LookAndFeel_V4()
 {
     setColour (juce::Slider::thumbColourId, juce::Colours::black);
@@ -16,10 +20,9 @@ juce::Slider::SliderLayout RotaryDecibelSliderLookAndFeel::getSliderLayout(juce:
     return layout;
 }
 
-
 void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y,
     int width, int height, float sliderPos, const float rotaryStartAngle, const float
-    rotaryEndAngle, juce::Slider& slider)
+    rotaryEndAngle, juce::Slider& /*slider*/)
 {
 
     float outerMargin = width * 0.03f;
@@ -36,7 +39,6 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     juce::Colour dialColour = CustomColours::offWhite;
     juce::Colour arcBgColour = CustomColours::grey;
     juce::Colour arcFgColour = CustomColours::blue;
-    
 
     // Outer circle fill
     g.setColour(dialColour);
@@ -48,14 +50,12 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     // Arc
     {
         // Outer arc background
-        
         p.clear();
         p.startNewSubPath(centreX + arcRadius * sin(rotaryStartAngle), centreY - arcRadius * cos(rotaryStartAngle));
         p.addCentredArc(centreX, centreY, arcRadius, arcRadius,
             0.0f, rotaryStartAngle, rotaryEndAngle, false);
         g.setColour(arcBgColour);
         g.strokePath(p, juce::PathStrokeType(arcWidth, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded));
-
         // Outer arc foreground glow
         p.clear();
         p.startNewSubPath(centreX + arcRadius * sin(rotaryStartAngle), centreY - arcRadius * cos(rotaryStartAngle));
@@ -76,9 +76,6 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
         g.setColour(dialColour);
         g.fillPath(p);
     }
-
-
-
     return;
 }
 
@@ -86,7 +83,6 @@ RisizableTextBox* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slid
 {
     auto* textBox = new RisizableTextBox();
     textBox->setColour ( juce::Label::textColourId, slider.findColour(juce::Slider::textBoxTextColourId));
-    // textBox->setColour (juce::Label::textWhenEditingColourId, slider.findColour (juce::Slider::textBoxTextColourId));
     return textBox; 
 }
 
@@ -95,15 +91,14 @@ RisizableTextBox* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slid
 ///////////////////////////////////////
 
 void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& button, float x, float y,
-    float w, float h, bool ticked, bool isEnabled,
-    bool shouldDrawButtonAsHighlighted,
-    bool shouldDrawButtonAsDown)
+    float w, float /*h*/, bool ticked, bool /*isEnabled*/,
+    bool /*shouldDrawButtonAsHighlighted*/,
+    bool /*shouldDrawButtonAsDown*/)
 {
     float outerMargin = w * 0.03f;
     juce::Rectangle<float> bounds = juce::Rectangle<float>
         (x, y, button.getWidth(), button.getHeight()).reduced(outerMargin);
     float radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) * 0.35f;
-    float outerRadius = radius * 1.44f;
     float innerRadius = radius / 1.44f;
 
     // Outer circle

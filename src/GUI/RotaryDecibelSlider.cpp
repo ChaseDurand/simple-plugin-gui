@@ -55,6 +55,35 @@ void RotaryDecibelSlider::mouseDrag(const juce::MouseEvent& event)
     }
 }
 
+bool RotaryDecibelSlider::keyPressed(const juce::KeyPress& key)
+{
+    // Incrase or decrease value on arrow key press.
+    // If shift is held, shift by smaller increment.
+    double increment = 1.0;
+    if(juce::ModifierKeys::getCurrentModifiers().isShiftDown())
+    {
+        increment = 0.1;
+    }
+    if(key.isKeyCode(juce::KeyPress::upKey) || key.isKeyCode(juce::KeyPress::rightKey))
+    
+    {            
+        // Increase value
+        setValue(getValue()+increment);
+        return true;
+
+    }
+    else if(key.isKeyCode(juce::KeyPress::downKey) || key.isKeyCode(juce::KeyPress::leftKey))
+    {
+        // Decrease value
+        setValue(getValue()-increment);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 double RotaryDecibelSlider::getValueFromText (const juce::String& text)
 {
     // Strip "db suffix and trim whitespace"

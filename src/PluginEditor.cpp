@@ -18,7 +18,7 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
         processorRef.apvts, MUTE_ID, muteButton);
 
     // Gain Knob
-    gainKnob.setColour(juce::Slider::backgroundColourId , CustomColours::offWhite);
+    gainKnob.setColour(juce::Slider::backgroundColourId, CustomColours::offWhite);
     gainKnob.setColour(juce::Slider::textBoxTextColourId, juce::Colours::black);
     gainKnob.setColour(juce::Slider::rotarySliderFillColourId, CustomColours::blue);
     gainKnob.setColour(juce::Slider::rotarySliderOutlineColourId, CustomColours::grey);
@@ -26,9 +26,9 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     gainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         processorRef.apvts, GAIN_ID, gainKnob);
 
-    // Channel Selector
-    channelButtonAttachment = std::make_unique<juce::ParameterAttachment>(*processorRef.apvts.getParameter(CHANNEL_ID),
-        [this](float value)
+    // Channel Selectors
+    channelButtonAttachment = std::make_unique<juce::ParameterAttachment>(
+        *processorRef.apvts.getParameter(CHANNEL_ID), [this](float value)
     {
             unsigned int index = static_cast<unsigned int>(std::floor(value / channelButtons.size()));
             if (juce::isPositiveAndBelow(index, channelButtons.size())){
@@ -58,8 +58,9 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
 
     addAndMakeVisible(meterL);
     addAndMakeVisible(meterR);
-    startTimerHz(24);
+    startTimerHz(24); // Refresh rate for meters
     
+    // Size plugin window, saving and restoring size for reopening
     juce::Point<int> size = processorRef.getSavedSize();
     int ratio = 2;
     setResizable(true, true);
@@ -120,6 +121,7 @@ void SimplePluginAudioProcessorEditor::resized()
 
 void SimplePluginAudioProcessorEditor::timerCallback()
 {
+    // Refresh levels for meter
     meterL.setLevel(processorRef.getRmsValue(0));
     meterR.setLevel(processorRef.getRmsValue(1));
     meterL.repaint();
