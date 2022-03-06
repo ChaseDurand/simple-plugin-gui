@@ -30,32 +30,35 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     channelButtonAttachment = std::make_unique<juce::ParameterAttachment>(
         *processorRef.apvts.getParameter(CHANNEL_ID), [this](float value)
     {
-            unsigned int index = static_cast<unsigned int>(std::floor(value / channelButtons.size()));
-            if (juce::isPositiveAndBelow(index, channelButtons.size())){
-                channelButtons[index] -> setToggleState (true, juce::NotificationType::dontSendNotification);
-            }
+        unsigned int index = static_cast<unsigned int>(value);
+        if (juce::isPositiveAndBelow(index, channelButtons.size())){
+            channelButtons[index] -> setToggleState (true, juce::NotificationType::dontSendNotification);
+        }
     }, nullptr);
     
-    auto makeButton = [this](auto name, int index)
+    auto makeButton = [this](juce::String name, int index) ->
+        std::unique_ptr<juce::Button>
     {
-        auto button = std::make_unique<juce::TextButton>(name);
+        std::unique_ptr<juce::Button> button = std::make_unique<juce::TextButton>(name);
         button->setClickingTogglesState (true);
         button->setRadioGroupId (RADIO_ID_CHANNEL);
         addAndMakeVisible (button.get());
-        button->onStateChange = [&, index]
+        button->onClick = [&b = *button, &cba = *channelButtonAttachment, index]
         {
-            if (button->getToggleState())
+            if (b.getToggleState())
             {
-                channelButtonAttachment->setValueAsCompleteGesture(index);
+                cba.setValueAsCompleteGesture(index);
             }
         };
         return button;
     };
 
-    channelButtons.push_back(makeButton ("Foo", 0));
-    channelButtons.push_back(makeButton ("Bar", 1));
-    channelButtons.push_back(makeButton ("Baz", 2));
-
+    channelButtons.push_back(makeButton (juce::String("Left"), 0));
+    channelButtons.push_back(makeButton (juce::String("Stereo"), 1));
+    channelButtons.back()->setToggleState(true, juce::NotificationType::dontSendNotification);
+    channelButtons.push_back(makeButton (juce::String("Right"), 2));
+    
+    // VU Meters
     addAndMakeVisible(meterL);
     addAndMakeVisible(meterR);
     startTimerHz(24); // Refresh rate for meters
@@ -100,11 +103,11 @@ void SimplePluginAudioProcessorEditor::resized()
                        widthUnit * 0.9f,
                        widthUnit * 0.9f);
 
-    // if (channelButtons.size() == 3){
-    //     channelButtons[0].get()->setBounds(getWidth() * 0.5f, getHeight() / 2 - 60, 60, 30);
-    //     channelButtons[1].get()->setBounds(getWidth() * 0.6f, getHeight() / 2 - 60, 60, 30);
-    //     channelButtons[2].get()->setBounds(getWidth() * 0.7f, getHeight() / 2 - 60, 60, 30);
-    // }
+    if (channelButtons.size() == 3){
+        channelButtons[0].get()->setBounds(getWidth() * 0.5f, getHeight() / 2 - 60, 60, 30);
+        channelButtons[1].get()->setBounds(getWidth() * 0.6f, getHeight() / 2 - 60, 60, 30);
+        channelButtons[2].get()->setBounds(getWidth() * 0.7f, getHeight() / 2 - 60, 60, 30);
+    }
 
     float meterHeightPercent = 0.8f;
     int meterHeight = getHeight() * meterHeightPercent;

@@ -27,9 +27,6 @@ private:
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> muteButtonAttachment;
-    // std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonLAttachment;
-    // std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonCAttachment;
-    // std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> channelButtonRAttachment;
     std::unique_ptr<juce::ParameterAttachment> channelButtonAttachment;
     std::vector<std::unique_ptr<juce::Button>> channelButtons;
 

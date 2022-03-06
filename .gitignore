@@ -39,3 +39,4 @@ build/*
 
 # Misc files
 *.DS_Store
+*.dsp_cache

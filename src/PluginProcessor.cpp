@@ -162,14 +162,40 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         levelSmoothed.setTargetValue(NEGATIVE_INF_THRESH);
     }
 
+    auto channelSelection = apvts.getRawParameterValue(CHANNEL_ID)->load();
+
     // Because we are applying a gain ramp across the buffer,
     // process all channels per sample (vs all samples per channels).
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
         auto gainToApply = juce::Decibels::decibelsToGain(levelSmoothed.getNextValue(), NEGATIVE_INF_THRESH);
-        for (int channel = 0; channel < totalNumInputChannels; ++channel){
-            auto *channelData = buffer.getWritePointer(channel);
-            channelData[sample] *= gainToApply;
-            juce::ignoreUnused(channelData);
+        if(channelSelection == 1)
+        {
+            // Stereo
+            for(int channel = 0; channel < totalNumInputChannels; ++channel)
+            {
+                auto *channelData = buffer.getWritePointer(channel);
+                channelData[sample] *= gainToApply;
+                // juce::ignoreUnused(channelData);
+            }
+        }
+        else
+        {
+            // Single channel
+
+            // Default left
+            int sourceChannel = 0;
+            if(channelSelection == 2)
+            {
+                // Right
+                sourceChannel = 1;
+            }
+            // Only use source channel for processing and copy result to all channels
+            auto *channelDataIn = buffer.getWritePointer(sourceChannel);
+            for(int channel = 0; channel < totalNumInputChannels; ++channel)
+            {
+                auto *channelDataOut = buffer.getWritePointer(channel);
+                channelDataOut[sample] = channelDataIn[sample] * gainToApply;
+            }
         }
     }
 
@@ -303,13 +329,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimplePluginAudioProcessor::
     nullptr
     ));
 
-
-
     parameters.push_back(std::make_unique<juce::AudioParameterChoice>
         (CHANNEL_ID,
 		CHANNEL_NAME,
-		juce::StringArray {"Foo", "Bar", "Baz"},
-		0));
+		juce::StringArray {"Left", "Stereo", "Right"},
+		1));
 
     return { parameters.begin(), parameters.end() };
 }

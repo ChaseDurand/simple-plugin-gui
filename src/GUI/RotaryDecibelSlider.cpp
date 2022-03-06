@@ -94,5 +94,5 @@ double RotaryDecibelSlider::getValueFromText (const juce::String& text)
 
 juce::String RotaryDecibelSlider::getTextFromValue (double value)
 {
-    return (value <= NEGATIVE_INF_THRESH) ? "-inf" : juce::Decibels::toString (value, 1);
+    return juce::Decibels::toString (value, 1, (double)NEGATIVE_INF_THRESH, true, "-inf");  
 }
