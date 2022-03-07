@@ -12,5 +12,5 @@ RisizableTextBox::RisizableTextBox()
 void RisizableTextBox::resized()
 {
     juce::Label::resized();
-    setFont (getWidth() * 0.16f);
+    setFont (getHeight());
 }

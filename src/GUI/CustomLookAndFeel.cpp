@@ -1,6 +1,7 @@
 #include "CustomLookAndFeel.h"
 #include "CustomColours.h"
 #include "MuteButton.h"
+#include "ChannelButton.h"
 
 ///////////////////////////////////////
 //       Rotary Decibel Slider       //
@@ -15,7 +16,18 @@ juce::Slider::SliderLayout RotaryDecibelSliderLookAndFeel::getSliderLayout(juce:
 {
     juce::Rectangle<int> localBounds = slider.getLocalBounds();
     juce::Slider::SliderLayout layout;
+    
+    int textBoxHeight = localBounds.getHeight() * 0.18;
+    int textBoxOffsetVertical = (localBounds.getHeight() - textBoxHeight) * 0.49;
+    
+    int textBoxWidth = localBounds.getWidth() * 0.7;
+    int textBoxOffsetHorizontal = (localBounds.getWidth() - textBoxWidth) * 0.5;
+
     layout.textBoxBounds = localBounds.withY(-1);
+    layout.textBoxBounds.setY(textBoxOffsetVertical);
+    layout.textBoxBounds.setHeight(textBoxHeight);
+    layout.textBoxBounds.setX(textBoxOffsetHorizontal);
+    layout.textBoxBounds.setWidth(textBoxWidth);
     layout.sliderBounds = localBounds;
     return layout;
 }
@@ -81,7 +93,9 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
 
 RisizableTextBox* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& slider)
 {
+    // TODO reduce size
     auto* textBox = new RisizableTextBox();
+    textBox->setBounds(0, slider.getHeight() * 0.5f, slider.getWidth(), 16);
     textBox->setColour ( juce::Label::textColourId, slider.findColour(juce::Slider::textBoxTextColourId));
     return textBox; 
 }
@@ -124,3 +138,47 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
 
     return;
 }
+
+///////////////////////////////////////
+//          Channel Button           //
+///////////////////////////////////////
+
+ChannelButtonLookAndFeel::ChannelButtonLookAndFeel() : LookAndFeel_V4()
+{
+    // setColour (juce::Slider::thumbColourId, juce::Colours::black);
+}
+
+// void ChannelButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& button, float x, float y,
+//     float w, float /*h*/, bool ticked, bool /*isEnabled*/,
+//     bool /*shouldDrawButtonAsHighlighted*/,
+//     bool /*shouldDrawButtonAsDown*/)
+// {
+//     float outerMargin = w * 0.03f;
+//     juce::Rectangle<float> bounds = juce::Rectangle<float>
+//         (x, y, button.getWidth(), button.getHeight()).reduced(outerMargin);
+//     float radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) * 0.35f;
+//     float innerRadius = radius / 1.44f;
+
+//     // Outer circle
+//     g.setColour(button.findColour(MuteButton::ColourIds::borderColourId));
+//     g.fillEllipse (button.getWidth() * 0.5f - radius,
+//         button.getHeight() * 0.5f - radius,
+//         radius * 2.0f, radius * 2.0f);
+
+//     if (ticked)
+//     {
+//         // Enabled
+//         g.setColour(button.findColour(MuteButton::ColourIds::tickColourId));
+//     }
+//     else{
+//         // Disabled
+//         g.setColour(button.findColour(MuteButton::ColourIds::tickDisabledColourId));
+//     }
+
+//     // Inner circle/LED
+//     g.fillEllipse (button.getWidth() * 0.5f - innerRadius,
+//         button.getWidth() * 0.5f - innerRadius,
+//         innerRadius * 2.0f, innerRadius * 2.0f);
+
+//     return;
+// }

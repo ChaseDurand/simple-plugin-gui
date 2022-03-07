@@ -36,10 +36,10 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
         }
     }, nullptr);
     
-    auto makeButton = [this](juce::String name, int index) ->
+    auto makeCB = [this](juce::String name, int index) ->
         std::unique_ptr<juce::Button>
     {
-        std::unique_ptr<juce::Button> button = std::make_unique<juce::TextButton>(name);
+        std::unique_ptr<juce::Button> button = std::make_unique<ChannelButton>(name);
         button->setClickingTogglesState (true);
         button->setRadioGroupId (RADIO_ID_CHANNEL);
         addAndMakeVisible (button.get());
@@ -53,10 +53,14 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
         return button;
     };
 
-    channelButtons.push_back(makeButton (juce::String("Left"), 0));
-    channelButtons.push_back(makeButton (juce::String("Stereo"), 1));
+    channelButtons.push_back(makeCB (juce::String("Left"), 0));
+    channelButtons.back()->setConnectedEdges(juce::TextButton::ConnectedOnRight);
+    channelButtons.push_back(makeCB (juce::String("Stereo"), 1));
     channelButtons.back()->setToggleState(true, juce::NotificationType::dontSendNotification);
-    channelButtons.push_back(makeButton (juce::String("Right"), 2));
+    channelButtons.back()->setConnectedEdges(juce::TextButton::ConnectedOnLeft |
+                                             juce::TextButton::ConnectedOnRight);
+    channelButtons.push_back(makeCB (juce::String("Right"), 2));
+    channelButtons.back()->setConnectedEdges(juce::TextButton::ConnectedOnLeft);
     
     // VU Meters
     addAndMakeVisible(meterL);
@@ -65,7 +69,7 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     
     // Size plugin window, saving and restoring size for reopening
     juce::Point<int> size = processorRef.getSavedSize();
-    int ratio = 2;
+    float ratio = 1.5f; // Plugin aspect ratio x/y
     setResizable(true, true);
     setResizeLimits(390, 390 / ratio, 3000, 3000 / ratio);
     getConstrainer()->setFixedAspectRatio(ratio);
@@ -104,9 +108,11 @@ void SimplePluginAudioProcessorEditor::resized()
                        widthUnit * 0.9f);
 
     if (channelButtons.size() == 3){
-        channelButtons[0].get()->setBounds(getWidth() * 0.5f, getHeight() / 2 - 60, 60, 30);
-        channelButtons[1].get()->setBounds(getWidth() * 0.6f, getHeight() / 2 - 60, 60, 30);
-        channelButtons[2].get()->setBounds(getWidth() * 0.7f, getHeight() / 2 - 60, 60, 30);
+        int buttonWidth = widthUnit * 0.65f;
+        int buttonHeight = widthUnit * 0.9f;
+        channelButtons[0].get()->setBounds(outerMargin + widthUnit * 2, (getHeight() - buttonHeight) / 2, buttonWidth, buttonHeight);
+        channelButtons[1].get()->setBounds(outerMargin + widthUnit * 2.66, (getHeight() - buttonHeight) / 2, buttonWidth, buttonHeight);
+        channelButtons[2].get()->setBounds(outerMargin + widthUnit * 3.32, (getHeight() - buttonHeight) / 2, buttonWidth, buttonHeight);
     }
 
     float meterHeightPercent = 0.8f;

@@ -27,3 +27,9 @@ class MuteButtonLookAndFeel : public juce::LookAndFeel_V4, juce::Component
         bool shouldDrawButtonAsDown) override;
 };
 
+class ChannelButtonLookAndFeel : public juce::LookAndFeel_V4, juce::Component
+{
+    public:
+        ChannelButtonLookAndFeel();
+};
+

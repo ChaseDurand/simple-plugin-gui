@@ -2,7 +2,8 @@
 #include "ComponentFocus.h"
 #include "CustomColours.h"
 
-MuteButton::MuteButton() : juce::ToggleButton(){
+MuteButton::MuteButton() : juce::ToggleButton()
+{
     setLookAndFeel(&muteButtonLookAndFeel);
     setWantsKeyboardFocus(true);
 }
