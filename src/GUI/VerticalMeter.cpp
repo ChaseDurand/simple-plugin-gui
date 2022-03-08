@@ -1,5 +1,7 @@
 #include "VerticalMeter.h"
 
+// TODO add orange and red for clipping
+
 void VerticalMeter::paint(juce::Graphics& g)
 {
     float cornerRound = getWidth() * 0.3f;

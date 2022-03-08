@@ -1,13 +1,15 @@
 #include "AudioDisplayScroll.h"
 
+// TODO reduce to single channel and instantiate two objects with different colors
+
 AudioDisplayScroll::AudioDisplayScroll() : AudioVisualiserComponent(2)
 {
-    setSamplesPerBlock (256);
-    setBufferSize (1024);
+    setSamplesPerBlock (256); // Updated in prepareToPlay.
+    setBufferSize (350); // Number of blocks saved. Controls "scroll speed".
     return;
 }
 
-void AudioDisplayScroll::audioDeviceAboutToStart(juce::AudioIODevice* device)
+void AudioDisplayScroll::audioDeviceAboutToStart(juce::AudioIODevice* /*device*/)
 {
     clear();
 }

@@ -1,5 +1,7 @@
 #include "ResizableLabel.h"
 
+// TODO update appearance when editing
+
 juce::String RisizableTextBox::valueShownWithEditor = "";
 
 RisizableTextBox::RisizableTextBox()

@@ -96,7 +96,7 @@ void SimplePluginAudioProcessorEditor::resized()
 {
     processorRef.setSavedSize({getWidth(), getHeight()});
 
-    processorRef.audioDisplayScroll.setBounds(0, 0, getWidth(), 64);
+    
 
     int outerMargin = (getWidth() * 0.03f);
     juce::Rectangle<int> bounds = juce::Rectangle<int>
@@ -104,21 +104,28 @@ void SimplePluginAudioProcessorEditor::resized()
 
     float widthUnit = bounds.getWidth() * 0.2f;
 
+    int audioDisplayWidth = bounds.getWidth() * 0.8f;
+    int audioDisplayHeight = bounds.getHeight() * 0.66f;
+    int verticalMargin = bounds.getHeight() * 0.05f;
+    int lowerComponentY = outerMargin + audioDisplayHeight + verticalMargin;
+
+    processorRef.audioDisplayScroll.setBounds(bounds.getX(), bounds.getY(), audioDisplayWidth, audioDisplayHeight);
+
     muteButton.setBounds(outerMargin,
-                         (getHeight() - widthUnit * 0.9f) * 0.5f,
+                         lowerComponentY,
                          widthUnit * 0.9f,
                          widthUnit * 0.9f);
     gainKnob.setBounds(outerMargin + widthUnit * 1,
-                       (getHeight() - widthUnit * 0.9f) * 0.5f,
+                       lowerComponentY,
                        widthUnit * 0.9f,
                        widthUnit * 0.9f);
 
     if (channelButtons.size() == 3){
         int buttonWidth = widthUnit * 0.65f;
         int buttonHeight = widthUnit * 0.9f;
-        channelButtons[0].get()->setBounds(outerMargin + widthUnit * 2, (getHeight() - buttonHeight) / 2, buttonWidth, buttonHeight);
-        channelButtons[1].get()->setBounds(outerMargin + widthUnit * 2.66, (getHeight() - buttonHeight) / 2, buttonWidth, buttonHeight);
-        channelButtons[2].get()->setBounds(outerMargin + widthUnit * 3.32, (getHeight() - buttonHeight) / 2, buttonWidth, buttonHeight);
+        channelButtons[0].get()->setBounds(outerMargin + widthUnit * 2, lowerComponentY, buttonWidth, buttonHeight);
+        channelButtons[1].get()->setBounds(outerMargin + widthUnit * 2.66, lowerComponentY, buttonWidth, buttonHeight);
+        channelButtons[2].get()->setBounds(outerMargin + widthUnit * 3.32, lowerComponentY, buttonWidth, buttonHeight);
     }
 
     float meterHeightPercent = 0.8f;

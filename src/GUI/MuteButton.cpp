@@ -2,6 +2,9 @@
 #include "ComponentFocus.h"
 #include "CustomColours.h"
 
+// TODO update graphics to match
+// TODO scale font based on size
+
 MuteButton::MuteButton() : juce::ToggleButton()
 {
     setLookAndFeel(&muteButtonLookAndFeel);
