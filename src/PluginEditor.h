@@ -20,7 +20,7 @@ public:
     void timerCallback() override;
 
 private:
-    // juce::Label rotaryDecibelLabel;
+    
     RotaryDecibelSlider gainKnob;
     MuteButton muteButton;
 

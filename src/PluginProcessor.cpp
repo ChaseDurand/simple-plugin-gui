@@ -92,9 +92,8 @@ void SimplePluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPer
     rmsRight.reset(sampleRate, meterSmoothingLengthSeconds);
     rmsLeft.setCurrentAndTargetValue(NEGATIVE_INF_THRESH);
     rmsRight.setCurrentAndTargetValue(NEGATIVE_INF_THRESH);
-
-    juce::ignoreUnused(sampleRate, samplesPerBlock);
     levelSmoothed.reset(sampleRate, gainSmoothingLengthSeconds);
+    audioDisplayScroll.setSamplesPerBlock(samplesPerBlock);
 }
 
 void SimplePluginAudioProcessor::releaseResources()
@@ -189,15 +188,23 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
                 // Right
                 sourceChannel = 1;
             }
-            // Only use source channel for processing and copy result to all channels
-            auto *channelDataIn = buffer.getWritePointer(sourceChannel);
+
+            // Only process source channel and copy result to all channels
+            auto *channelDataSource = buffer.getWritePointer(sourceChannel);
+            channelDataSource[sample] *= gainToApply;
             for(int channel = 0; channel < totalNumInputChannels; ++channel)
             {
-                auto *channelDataOut = buffer.getWritePointer(channel);
-                channelDataOut[sample] = channelDataIn[sample] * gainToApply;
+                if(channel != sourceChannel)
+                {
+                    auto *channelDataOut = buffer.getWritePointer(channel);
+                    channelDataOut[sample] = channelDataSource[sample];
+                }
             }
         }
     }
+
+    // Update scrolling waveform
+    audioDisplayScroll.pushBuffer(buffer);
 
     // Increment rms smoothed value.
     rmsLeft.skip(buffer.getNumSamples());

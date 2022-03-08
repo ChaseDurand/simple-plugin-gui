@@ -6,7 +6,10 @@
 SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginAudioProcessor &p)
     : AudioProcessorEditor(&p), processorRef(p)
 {
-    juce::ignoreUnused(processorRef);
+
+    // Audio Waveform Display
+    addAndMakeVisible(processorRef.audioDisplayScroll);
+    processorRef.audioDeviceManager.addAudioCallback(&processorRef.audioDisplayScroll);
 
     // Mute Button
     muteButton.setColour(MuteButton::ColourIds::borderColourId, CustomColours::offWhite);
@@ -79,7 +82,8 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
 }
 
 SimplePluginAudioProcessorEditor::~SimplePluginAudioProcessorEditor()
-{
+{   
+    processorRef.audioDeviceManager.removeAudioCallback(&processorRef.audioDisplayScroll);
 }
 
 //==============================================================================
@@ -91,6 +95,8 @@ void SimplePluginAudioProcessorEditor::paint(juce::Graphics &g)
 void SimplePluginAudioProcessorEditor::resized()
 {
     processorRef.setSavedSize({getWidth(), getHeight()});
+
+    processorRef.audioDisplayScroll.setBounds(0, 0, getWidth(), 64);
 
     int outerMargin = (getWidth() * 0.03f);
     juce::Rectangle<int> bounds = juce::Rectangle<int>

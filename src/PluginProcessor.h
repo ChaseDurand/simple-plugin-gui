@@ -1,6 +1,7 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include "GUI/AudioDisplayScroll.h"
 #define GAIN_ID "GAIN"
 #define GAIN_NAME "Gain"
 #define GAIN_MAX 24.0f
@@ -60,6 +61,9 @@ public:
     double meterSmoothingLengthSeconds = 0.5;
 
     float getRmsValue(const int channel) const;
+
+    AudioDisplayScroll audioDisplayScroll;
+    juce::AudioDeviceManager audioDeviceManager;
 
 private:
     //==============================================================================
