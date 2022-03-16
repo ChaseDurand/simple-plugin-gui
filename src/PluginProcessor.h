@@ -1,7 +1,8 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
-#include "GUI/AudioDisplayScroll.h"
+#include <juce_audio_devices/juce_audio_devices.h>
+#include "GUI/AudioVisualiserOverlayed.h"
 #define GAIN_ID "GAIN"
 #define GAIN_NAME "Gain"
 #define GAIN_MAX 24.0f
@@ -62,7 +63,7 @@ public:
 
     float getRmsValue(const int channel) const;
 
-    AudioDisplayScroll audioDisplayScroll;
+    juce::AudioVisualiserOverlayed audioDisplayScroll {2};
     juce::AudioDeviceManager audioDeviceManager;
 
 private:

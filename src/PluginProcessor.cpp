@@ -86,14 +86,13 @@ void SimplePluginAudioProcessor::changeProgramName(int index, const juce::String
 }
 
 //==============================================================================
-void SimplePluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
+void SimplePluginAudioProcessor::prepareToPlay(double sampleRate, int /*samplesPerBlock*/)
 {
     rmsLeft.reset(sampleRate, meterSmoothingLengthSeconds);
     rmsRight.reset(sampleRate, meterSmoothingLengthSeconds);
     rmsLeft.setCurrentAndTargetValue(NEGATIVE_INF_THRESH);
     rmsRight.setCurrentAndTargetValue(NEGATIVE_INF_THRESH);
     levelSmoothed.reset(sampleRate, gainSmoothingLengthSeconds);
-    audioDisplayScroll.setSamplesPerBlock(samplesPerBlock);
 }
 
 void SimplePluginAudioProcessor::releaseResources()
@@ -143,13 +142,6 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-
     auto muteStatus = apvts.getRawParameterValue(MUTE_ID)->load();
     if (muteStatus == 0.0f){
         // Not muted, use gain value.
@@ -174,13 +166,11 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
             {
                 auto *channelData = buffer.getWritePointer(channel);
                 channelData[sample] *= gainToApply;
-                // juce::ignoreUnused(channelData);
             }
         }
         else
         {
             // Single channel
-
             // Default left
             int sourceChannel = 0;
             if(channelSelection == 2)
@@ -201,6 +191,8 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
                 }
             }
         }
+
+
     }
 
     // Update scrolling waveform

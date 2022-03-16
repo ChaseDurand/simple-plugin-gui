@@ -9,7 +9,7 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
 
     // Audio Waveform Display
     addAndMakeVisible(processorRef.audioDisplayScroll);
-    processorRef.audioDeviceManager.addAudioCallback(&processorRef.audioDisplayScroll);
+    // processorRef.audioDeviceManager.addAudioCallback(&processorRef.audioDisplayScrollL);
 
     // Mute Button
     muteButton.setColour(MuteButton::ColourIds::borderColourId, CustomColours::offWhite);
@@ -83,7 +83,7 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
 
 SimplePluginAudioProcessorEditor::~SimplePluginAudioProcessorEditor()
 {   
-    processorRef.audioDeviceManager.removeAudioCallback(&processorRef.audioDisplayScroll);
+    // processorRef.audioDeviceManager.removeAudioCallback(&processorRef.audioDisplayScrollL);
 }
 
 //==============================================================================

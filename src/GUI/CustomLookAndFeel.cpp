@@ -17,7 +17,7 @@ juce::Slider::SliderLayout RotaryDecibelSliderLookAndFeel::getSliderLayout(juce:
     juce::Rectangle<int> localBounds = slider.getLocalBounds();
     juce::Slider::SliderLayout layout;
     
-    int textBoxHeight = localBounds.getHeight() * 0.18;
+    int textBoxHeight = localBounds.getHeight() * 0.17;
     int textBoxOffsetVertical = (localBounds.getHeight() - textBoxHeight) * 0.49;
     
     int textBoxWidth = localBounds.getWidth() * 0.7;
