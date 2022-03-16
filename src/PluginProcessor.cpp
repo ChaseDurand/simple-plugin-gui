@@ -90,8 +90,8 @@ void SimplePluginAudioProcessor::prepareToPlay(double sampleRate, int /*samplesP
 {
     rmsLeft.reset(sampleRate, meterSmoothingLengthSeconds);
     rmsRight.reset(sampleRate, meterSmoothingLengthSeconds);
-    rmsLeft.setCurrentAndTargetValue(NEGATIVE_INF_THRESH);
-    rmsRight.setCurrentAndTargetValue(NEGATIVE_INF_THRESH);
+    rmsLeft.setCurrentAndTargetValue(config::NEGATIVE_INF_THRESH);
+    rmsRight.setCurrentAndTargetValue(config::NEGATIVE_INF_THRESH);
     levelSmoothed.reset(sampleRate, gainSmoothingLengthSeconds);
 }
 
@@ -142,23 +142,23 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    auto muteStatus = apvts.getRawParameterValue(MUTE_ID)->load();
+    auto muteStatus = apvts.getRawParameterValue(config::MUTE_ID)->load();
     if (muteStatus == 0.0f){
         // Not muted, use gain value.
-        auto currentGain = apvts.getRawParameterValue(GAIN_ID)->load();
+        auto currentGain = apvts.getRawParameterValue(config::GAIN_ID)->load();
         levelSmoothed.setTargetValue(currentGain);
     }
     else{
         // Muted, use negative infinity gain.
-        levelSmoothed.setTargetValue(NEGATIVE_INF_THRESH);
+        levelSmoothed.setTargetValue(config::NEGATIVE_INF_THRESH);
     }
 
-    auto channelSelection = apvts.getRawParameterValue(CHANNEL_ID)->load();
+    auto channelSelection = apvts.getRawParameterValue(config::CHANNEL_ID)->load();
 
     // Because we are applying a gain ramp across the buffer,
     // process all channels per sample (vs all samples per channels).
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
-        auto gainToApply = juce::Decibels::decibelsToGain(levelSmoothed.getNextValue(), NEGATIVE_INF_THRESH);
+        auto gainToApply = juce::Decibels::decibelsToGain(levelSmoothed.getNextValue(), config::NEGATIVE_INF_THRESH);
         if(channelSelection == 1)
         {
             // Stereo
@@ -301,24 +301,24 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimplePluginAudioProcessor::
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
     parameters.push_back(std::make_unique<juce::AudioParameterBool>
-        (MUTE_ID, MUTE_NAME, false));
+        (config::MUTE_ID, config::MUTE_NAME, false));
     
     // Calculate skew value for gain knob to set 0dB at 12 o'clock.
     float gainCenterPoint = 0.0f;
     float gainSkew = std::log (static_cast<float> (0.5)) /
-        std::log ((gainCenterPoint - NEGATIVE_INF_THRESH)
-            / (GAIN_MAX - NEGATIVE_INF_THRESH));
+        std::log ((gainCenterPoint - config::NEGATIVE_INF_THRESH)
+            / (config::GAIN_MAX - config::NEGATIVE_INF_THRESH));
 
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>
-    (GAIN_ID,
-    GAIN_NAME,
-    juce::NormalisableRange<float>(NEGATIVE_INF_THRESH, GAIN_MAX, 0, gainSkew, false),
+    (config::GAIN_ID,
+    config::GAIN_NAME,
+    juce::NormalisableRange<float>(config::NEGATIVE_INF_THRESH, config::GAIN_MAX, 0, gainSkew, false),
     0.0f,
     juce::String(),
     juce::AudioProcessorParameter::genericParameter,
     // Return "-inf" to host if gain is at lower threshold
     [](float value, int maximumStringLength) {
-        if ((value > NEGATIVE_INF_THRESH) || (maximumStringLength < 4)){
+        if ((value > config::NEGATIVE_INF_THRESH) || (maximumStringLength < 4)){
             return juce::Decibels::toString(value);
         }
         else{
@@ -329,8 +329,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimplePluginAudioProcessor::
     ));
 
     parameters.push_back(std::make_unique<juce::AudioParameterChoice>
-        (CHANNEL_ID,
-		CHANNEL_NAME,
+        (config::CHANNEL_ID,
+		config::CHANNEL_NAME,
 		juce::StringArray {"Left", "Stereo", "Right"},
 		1));
 

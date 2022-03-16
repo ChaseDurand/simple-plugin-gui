@@ -1,17 +1,10 @@
 #pragma once
+#include "Config.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_audio_devices/juce_audio_devices.h>
 #include "GUI/AudioVisualiserOverlayed.h"
-#define GAIN_ID "GAIN"
-#define GAIN_NAME "Gain"
-#define GAIN_MAX 24.0f
-#define NEGATIVE_INF_THRESH -60.0f // db theshold for silence
-#define MUTE_ID "MUTE"
-#define MUTE_NAME "Mute"
-#define RADIO_ID_CHANNEL 01
-#define CHANNEL_ID "CHANNEL"
-#define CHANNEL_NAME "Channel"
+
 
 //==============================================================================
 class SimplePluginAudioProcessor : public juce::AudioProcessor

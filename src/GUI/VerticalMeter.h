@@ -1,5 +1,6 @@
 #include <juce_gui_basics/juce_gui_basics.h>
-#define NEGATIVE_INF_THRESH -60.0f
+#include "../Config.h"
+// #define config::NEGATIVE_INF_THRESH -60.0f
 
 class VerticalMeter : public juce::Component
 {
@@ -7,5 +8,5 @@ class VerticalMeter : public juce::Component
         void paint(juce::Graphics& g) override;
         void setLevel(const float value);
     private:
-        float level = NEGATIVE_INF_THRESH;
+        float level = config::NEGATIVE_INF_THRESH;
 };

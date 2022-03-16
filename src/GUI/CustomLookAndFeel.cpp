@@ -50,7 +50,7 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
 
     juce::Colour dialColour = CustomColours::offWhite;
     juce::Colour arcBgColour = CustomColours::grey;
-    juce::Colour arcFgColour = CustomColours::blue;
+    juce::Colour arcFgColour = CustomColours::green;
 
     // Outer circle fill
     g.setColour(dialColour);

@@ -9,7 +9,7 @@ RotaryDecibelSlider::RotaryDecibelSlider() : juce::Slider()
     setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     setWantsKeyboardFocus(true);
     setVelocityBasedMode (true);
-    setRange(NEGATIVE_INF_THRESH, GAIN_MAX, 0.1f);
+    setRange(config::NEGATIVE_INF_THRESH, config::GAIN_MAX, 0.1f);
     setDoubleClickReturnValue(true, 0.0f);
 }
 RotaryDecibelSlider::~RotaryDecibelSlider()
@@ -51,7 +51,7 @@ void RotaryDecibelSlider::mouseDrag(const juce::MouseEvent& event)
     }
     else
     {
-        setVelocityModeParameters(0.8, 1, 0.1, false);
+        setVelocityModeParameters(0.7, 1, 0.1, false);
     }
 }
 
@@ -89,10 +89,10 @@ double RotaryDecibelSlider::getValueFromText (const juce::String& text)
     // Strip "db suffix and trim whitespace"
     auto decibelText = text.upToFirstOccurrenceOf ("dB", false, false).trim();
     // If remaining text is "-inf", return minusInfinitydB, otherwise return value
-    return decibelText.equalsIgnoreCase("-inf") ? NEGATIVE_INF_THRESH : decibelText.getDoubleValue();
+    return decibelText.equalsIgnoreCase("-inf") ? config::NEGATIVE_INF_THRESH : decibelText.getDoubleValue();
 }
 
 juce::String RotaryDecibelSlider::getTextFromValue (double value)
 {
-    return juce::Decibels::toString (value, 1, (double)NEGATIVE_INF_THRESH, true, "-inf");  
+    return juce::Decibels::toString (value, 1, (double)config::NEGATIVE_INF_THRESH, true, "-inf");  
 }

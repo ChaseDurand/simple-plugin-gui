@@ -9,7 +9,6 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
 
     // Audio Waveform Display
     addAndMakeVisible(processorRef.audioDisplayScroll);
-    // processorRef.audioDeviceManager.addAudioCallback(&processorRef.audioDisplayScrollL);
 
     // Mute Button
     muteButton.setColour(MuteButton::ColourIds::borderColourId, CustomColours::offWhite);
@@ -18,7 +17,7 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     
     addAndMakeVisible(muteButton);
     muteButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
-        processorRef.apvts, MUTE_ID, muteButton);
+        processorRef.apvts, config::MUTE_ID, muteButton);
 
     // Gain Knob
     gainKnob.setColour(juce::Slider::backgroundColourId, CustomColours::offWhite);
@@ -27,11 +26,11 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     gainKnob.setColour(juce::Slider::rotarySliderOutlineColourId, CustomColours::grey);
     addAndMakeVisible(gainKnob);
     gainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        processorRef.apvts, GAIN_ID, gainKnob);
+        processorRef.apvts, config::GAIN_ID, gainKnob);
 
     // Channel Selectors
     channelButtonAttachment = std::make_unique<juce::ParameterAttachment>(
-        *processorRef.apvts.getParameter(CHANNEL_ID), [this](float value)
+        *processorRef.apvts.getParameter(config::CHANNEL_ID), [this](float value)
     {
         unsigned int index = static_cast<unsigned int>(value);
         if (juce::isPositiveAndBelow(index, channelButtons.size())){
@@ -44,7 +43,7 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     {
         std::unique_ptr<juce::Button> button = std::make_unique<ChannelButton>(name);
         button->setClickingTogglesState (true);
-        button->setRadioGroupId (RADIO_ID_CHANNEL);
+        button->setRadioGroupId (config::RADIO_ID_CHANNEL);
         addAndMakeVisible (button.get());
         button->onClick = [&b = *button, &cba = *channelButtonAttachment, index]
         {
@@ -83,7 +82,6 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
 
 SimplePluginAudioProcessorEditor::~SimplePluginAudioProcessorEditor()
 {   
-    // processorRef.audioDeviceManager.removeAudioCallback(&processorRef.audioDisplayScrollL);
 }
 
 //==============================================================================

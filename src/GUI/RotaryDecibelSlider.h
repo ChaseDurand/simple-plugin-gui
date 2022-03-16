@@ -2,8 +2,7 @@
 #include <juce_gui_extra/juce_gui_extra.h>
 #include <juce_audio_basics/juce_audio_basics.h>
 #include "CustomLookAndFeel.h"
-#define NEGATIVE_INF_THRESH -60.0f // db theshold for silence
-#define GAIN_MAX 24.0f
+#include "../Config.h"
 
 class RotaryDecibelSlider : public juce::Slider{
     public:

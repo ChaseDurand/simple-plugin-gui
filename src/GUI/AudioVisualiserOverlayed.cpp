@@ -1,4 +1,5 @@
 #include "AudioVisualiserOverlayed.h"
+#include "CustomColours.h"
 
 namespace juce
 {
@@ -69,7 +70,7 @@ AudioVisualiserOverlayed::AudioVisualiserOverlayed (int initialNumChannels)
     setNumChannels (initialNumChannels);
     setRepaintRate (60);
     setSamplesPerBlock (512);
-    setBufferSize (64);
+    setBufferSize (128);
 }
 
 AudioVisualiserOverlayed::~AudioVisualiserOverlayed()
@@ -158,17 +159,17 @@ void AudioVisualiserOverlayed::paint (Graphics& g)
 
     auto r = getLocalBounds().toFloat();
 
-    g.setColour (waveformColour);
-    g.setColour(juce::Colour::fromFloatRGBA(0.0f, 0.33f, 1.0f, 0.65f));
-
+    // Left channel
+    juce::Colour col = CustomColours::blue.withAlpha(0.9f);
     auto* c = channels[0];
         paintChannel (g, r,
-            c->levels.begin(), c->levels.size(), c->nextSample);
+            c->levels.begin(), c->levels.size(), c->nextSample, col);
 
-    g.setColour(juce::Colour::fromFloatRGBA(1.0f, 0.1f, 0.17f, 0.65f));
+    // Right channel
+    col = CustomColours::orange.withAlpha(0.9f);
     c = channels[1];
         paintChannel (g, r,
-            c->levels.begin(), c->levels.size(), c->nextSample);
+            c->levels.begin(), c->levels.size(), c->nextSample, col);
 }
 
 void AudioVisualiserOverlayed::audioDeviceIOCallback(const float** inputChannelData,
@@ -222,15 +223,26 @@ void AudioVisualiserOverlayed::getChannelAsPath (Path& path, const Range<float>*
 }
 
 void AudioVisualiserOverlayed::paintChannel (Graphics& g, Rectangle<float> area,
-                                             const Range<float>* levels, int numLevels, int nextSample)
+    const Range<float>* levels, int numLevels, int nextSample, juce::Colour& col)
 {
     Path p;
     getChannelAsPath (p, levels, numLevels, nextSample);
-    juce::PathStrokeType stroke(getWidth() * 0.005f);
-    
+
+    // Outline
+    juce::PathStrokeType stroke(getWidth() * 0.008f);
+    g.setColour(col);
     g.strokePath (p, stroke, AffineTransform::fromTargetPoints (0.0f, -1.0f,               area.getX(), area.getY(),
                                                       0.0f, 1.0f,                area.getX(), area.getBottom(),
                                                       (float) numLevels, -1.0f,  area.getRight(), area.getY()));
+
+    
+    // Fill
+    g.setColour(col.withAlpha(0.75f));
+    g.fillPath (p, AffineTransform::fromTargetPoints (0.0f, -1.0f,               area.getX(), area.getY(),
+                                                      0.0f, 1.0f,                area.getX(), area.getBottom(),
+                                                      (float) numLevels, -1.0f,  area.getRight(), area.getY()));
+
+
 }
 
 } // namespace juce

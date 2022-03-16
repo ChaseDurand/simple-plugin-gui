@@ -68,7 +68,7 @@ public:
         area. You may want to override this to draw things differently.
     */
     virtual void paintChannel (Graphics&, Rectangle<float> bounds,
-                               const Range<float>* levels, int numLevels, int nextSample);
+        const Range<float>* levels, int numLevels, int nextSample, juce::Colour& col);
 
     /** Creates a path which contains the waveform shape of a given set of range data.
         The path is normalised so that -1 and +1 are its upper and lower bounds, and it
