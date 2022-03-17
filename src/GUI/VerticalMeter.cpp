@@ -1,23 +1,20 @@
 #include "VerticalMeter.h"
+#include "CustomColours.h"
 
 // TODO add orange and red for clipping
-// TODO fix low threshold graphics bug
 
 void VerticalMeter::paint(juce::Graphics& g)
 {
-    float cornerRound = getWidth() * 0.3f;
-
     // Meter background
-    auto bounds = getLocalBounds().toFloat();
+    juce::Rectangle<float> bounds = getLocalBounds().toFloat();
     g.setColour(juce::Colour(127, 127, 127));
-    g.fillRoundedRectangle(bounds, cornerRound);
+    g.fillRect(bounds);
 
     // Meter foreground
-    float meterMax = 6.f;
-    const auto scaledY = juce::jmap(level, config::NEGATIVE_INF_THRESH, meterMax, 0.f, static_cast<float>(getHeight()));
-    g.setColour(juce::Colours::white);
-    g.fillRoundedRectangle(bounds.removeFromBottom(scaledY), cornerRound);
-    return;
+    float meterMax = 12.f;
+    float scaledY = juce::jmap(level, config::NEGATIVE_INF_THRESH, meterMax, 0.f, static_cast<float>(getHeight()));
+    g.setColour(CustomColours::offWhite);
+    g.fillRect(bounds.removeFromBottom(scaledY));
 }
 
 void VerticalMeter::setLevel(const float value)

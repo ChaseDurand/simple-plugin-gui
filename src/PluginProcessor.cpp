@@ -258,8 +258,10 @@ void SimplePluginAudioProcessor::setStateInformation(const void *data, int sizeI
         auto editor = apvts.state.getChildWithName("editor");
         if(editor.isValid())
         {
-            editorSize.setX(editor.getProperty("size-x", 520));
-            editorSize.setY(editor.getProperty("size-y", 520 / 2.0));
+            editorSize.setX(editor.getProperty("size-x",
+                config::PLUGIN_X_INITIAL));
+            editorSize.setY(editor.getProperty("size-y",
+                config::PLUGIN_X_INITIAL / config::PLUGIN_ASPECT_RATIO));
             if(auto* thisEditor = getActiveEditor())
             {
                 thisEditor->setSize(editorSize.x, editorSize.y);

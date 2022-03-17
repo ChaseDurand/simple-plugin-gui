@@ -73,7 +73,10 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     juce::Point<int> size = processorRef.getSavedSize();
     float ratio = 1.5f; // Plugin aspect ratio x/y
     setResizable(true, true);
-    setResizeLimits(390, 390 / ratio, 3000, 3000 / ratio);
+    setResizeLimits(config::PLUGIN_X_MIN,
+        config::PLUGIN_X_MIN / config::PLUGIN_ASPECT_RATIO,
+        config::PLUGIN_X_MAX,
+        config::PLUGIN_X_MAX / config::PLUGIN_ASPECT_RATIO);
     getConstrainer()->setFixedAspectRatio(ratio);
     setSize(size.x, size.y);
 
@@ -92,16 +95,15 @@ void SimplePluginAudioProcessorEditor::paint(juce::Graphics &g)
 
 void SimplePluginAudioProcessorEditor::resized()
 {
+    // Save size to be restored when close+reopened
     processorRef.setSavedSize({getWidth(), getHeight()});
 
-    
-
+    // Create padding
     int outerMargin = (getWidth() * 0.03f);
     juce::Rectangle<int> bounds = juce::Rectangle<int>
         (getX(), getY(), getWidth(), getHeight()).reduced(outerMargin);
 
     float widthUnit = bounds.getWidth() * 0.2f;
-
     int audioDisplayWidth = bounds.getWidth() * 0.8f;
     int audioDisplayHeight = bounds.getHeight() * 0.66f;
     int verticalMargin = bounds.getHeight() * 0.05f;
@@ -126,16 +128,16 @@ void SimplePluginAudioProcessorEditor::resized()
         channelButtons[2].get()->setBounds(outerMargin + widthUnit * 3.32, lowerComponentY, buttonWidth, buttonHeight);
     }
 
-    float meterHeightPercent = 0.8f;
-    int meterHeight = getHeight() * meterHeightPercent;
-    int meterMargin =getHeight() * (1.0f - meterHeightPercent) * 0.5f;
-    meterL.setBounds((outerMargin + widthUnit * 4.2),
-                     meterMargin,
-                     (widthUnit * 0.26),
+    float meterHeightPercent = 1.0f;
+    int meterHeight = bounds.getHeight();
+    int meterWidth = widthUnit * 0.35;
+    meterL.setBounds((outerMargin + widthUnit * 4.0 + (0.5 * (widthUnit - 2 * meterWidth ))),
+                     outerMargin,
+                     meterWidth,
                      meterHeight);
-    meterR.setBounds((outerMargin + widthUnit * 4.5),
-                     meterMargin,
-                     (widthUnit * 0.26),
+    meterR.setBounds((outerMargin + widthUnit * 4.0 + (0.5 * (widthUnit - 2 * meterWidth ) + 0.5 * widthUnit)),
+                     outerMargin,
+                     meterWidth,
                      meterHeight);
 }
 

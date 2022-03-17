@@ -16,4 +16,8 @@ namespace config
     const juce::String CHANNEL_NAME("Channel");
     const double gainSmoothingLengthSeconds = 0.03;
     const double meterSmoothingLengthSeconds = 0.5;
+    const int PLUGIN_X_INITIAL = 520;
+    const int PLUGIN_X_MIN = 390;
+    const int PLUGIN_X_MAX = 3000;
+    const float PLUGIN_ASPECT_RATIO = 1.5;
 }
