@@ -43,9 +43,9 @@ void RotaryDecibelSlider::mouseUp(const juce::MouseEvent& event)
 
 void RotaryDecibelSlider::mouseDrag(const juce::MouseEvent& event)
 {
-    // Increase sensitivity when shift is held
+    // Increase sensitivity when shift or command is held
     juce::Slider::mouseDrag(event);
-    if(event.mods.isShiftDown())
+    if(event.mods.isShiftDown() || event.mods.isCommandDown())
     {
         setVelocityModeParameters(0.08, 1, 0.1, false);
     }
@@ -58,9 +58,10 @@ void RotaryDecibelSlider::mouseDrag(const juce::MouseEvent& event)
 bool RotaryDecibelSlider::keyPressed(const juce::KeyPress& key)
 {
     // Incrase or decrease value on arrow key press.
-    // If shift is held, shift by smaller increment.
+    // If shift or command are held, change value by smaller increment.
     double increment = 1.0;
-    if(juce::ModifierKeys::getCurrentModifiers().isShiftDown())
+    if(juce::ModifierKeys::getCurrentModifiers().isShiftDown() || 
+        juce::ModifierKeys::getCurrentModifiers().isCommandDown())
     {
         increment = 0.1;
     }
