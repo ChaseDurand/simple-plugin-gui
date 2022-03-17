@@ -14,8 +14,8 @@ namespace config
     const int RADIO_ID_CHANNEL = 01;
     const juce::String CHANNEL_ID("CHANNEL");
     const juce::String CHANNEL_NAME("Channel");
-    const double gainSmoothingLengthSeconds = 0.03;
-    const double meterSmoothingLengthSeconds = 0.5;
+    const double SMOOTHING_TIME_GAIN = 0.03; // Gain change smoothing time in seconds
+    const double SMOOTHING_TIME_METER = 0.5; // Smoothing time for decreasing RMS values
     const int PLUGIN_X_INITIAL = 520;
     const int PLUGIN_X_MIN = 390;
     const int PLUGIN_X_MAX = 3000;

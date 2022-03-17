@@ -71,13 +71,12 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     
     // Size plugin window, saving and restoring size for reopening
     juce::Point<int> size = processorRef.getSavedSize();
-    float ratio = 1.5f; // Plugin aspect ratio x/y
     setResizable(true, true);
     setResizeLimits(config::PLUGIN_X_MIN,
         config::PLUGIN_X_MIN / config::PLUGIN_ASPECT_RATIO,
         config::PLUGIN_X_MAX,
         config::PLUGIN_X_MAX / config::PLUGIN_ASPECT_RATIO);
-    getConstrainer()->setFixedAspectRatio(ratio);
+    getConstrainer()->setFixedAspectRatio(config::PLUGIN_ASPECT_RATIO);
     setSize(size.x, size.y);
 
     setWantsKeyboardFocus(true);
