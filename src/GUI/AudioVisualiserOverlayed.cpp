@@ -1,9 +1,6 @@
 #include "AudioVisualiserOverlayed.h"
 #include "CustomColours.h"
 
-namespace juce
-{
-
 struct AudioVisualiserOverlayed::ChannelInfo
 {
     ChannelInfo (AudioVisualiserOverlayed& o, int bufferSize) : owner (o)
@@ -34,7 +31,7 @@ struct AudioVisualiserOverlayed::ChannelInfo
 
             levels.getReference (nextSample) = value;
             subSample = owner.getSamplesPerBlock();
-            value = Range<float> (newSample, newSample);
+            value = juce::Range<float> (newSample, newSample);
         }
         else
         {
@@ -52,8 +49,8 @@ struct AudioVisualiserOverlayed::ChannelInfo
     }
 
     AudioVisualiserOverlayed& owner;
-    Array<Range<float>> levels;
-    Range<float> value;
+    juce::Array<juce::Range<float>> levels;
+    juce::Range<float> value;
     std::atomic<int> nextSample { 0 }, subSample { 0 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelInfo)
@@ -63,8 +60,8 @@ struct AudioVisualiserOverlayed::ChannelInfo
 AudioVisualiserOverlayed::AudioVisualiserOverlayed (int initialNumChannels)
   : numSamples (1024),
     inputSamplesPerBlock (256),
-    backgroundColour (Colours::black),
-    waveformColour (Colours::white)
+    backgroundColour (juce::Colours::black),
+    waveformColour (juce::Colours::white)
 {
     setOpaque (false);
     setNumChannels (initialNumChannels);
@@ -101,22 +98,22 @@ void AudioVisualiserOverlayed::clear()
 
 void AudioVisualiserOverlayed::pushBuffer (const float** d, int numChannels, int num)
 {
-    numChannels = jmin (numChannels, channels.size());
+    numChannels = juce::jmin (numChannels, channels.size());
 
     for (int i = 0; i < numChannels; ++i)
         channels.getUnchecked(i)->pushSamples (d[i], num);
 }
 
-void AudioVisualiserOverlayed::pushBuffer (const AudioBuffer<float>& buffer)
+void AudioVisualiserOverlayed::pushBuffer (const juce::AudioBuffer<float>& buffer)
 {
     pushBuffer (buffer.getArrayOfReadPointers(),
                 buffer.getNumChannels(),
                 buffer.getNumSamples());
 }
 
-void AudioVisualiserOverlayed::pushBuffer (const AudioSourceChannelInfo& buffer)
+void AudioVisualiserOverlayed::pushBuffer (const juce::AudioSourceChannelInfo& buffer)
 {
-    auto numChannels = jmin (buffer.buffer->getNumChannels(), channels.size());
+    auto numChannels = juce::jmin (buffer.buffer->getNumChannels(), channels.size());
 
     for (int i = 0; i < numChannels; ++i)
         channels.getUnchecked(i)->pushSamples (buffer.buffer->getReadPointer (i, buffer.startSample),
@@ -125,7 +122,7 @@ void AudioVisualiserOverlayed::pushBuffer (const AudioSourceChannelInfo& buffer)
 
 void AudioVisualiserOverlayed::pushSample (const float* d, int numChannels)
 {
-    numChannels = jmin (numChannels, channels.size());
+    numChannels = juce::jmin (numChannels, channels.size());
 
     for (int i = 0; i < numChannels; ++i)
         channels.getUnchecked(i)->pushSample (d[i]);
@@ -146,14 +143,14 @@ void AudioVisualiserOverlayed::timerCallback()
     repaint();
 }
 
-void AudioVisualiserOverlayed::setColours (Colour bk, Colour fg) noexcept
+void AudioVisualiserOverlayed::setColours (juce::Colour bk, juce::Colour fg) noexcept
 {
     backgroundColour = bk;
     waveformColour = fg;
     repaint();
 }
 
-void AudioVisualiserOverlayed::paint (Graphics& g)
+void AudioVisualiserOverlayed::paint (juce::Graphics& g)
 {
     g.fillAll (backgroundColour);
 
@@ -172,36 +169,7 @@ void AudioVisualiserOverlayed::paint (Graphics& g)
             c->levels.begin(), c->levels.size(), c->nextSample, col);
 }
 
-void AudioVisualiserOverlayed::audioDeviceIOCallback(const float** inputChannelData,
-    int numInputChannels, float** outputChannelData, int numOutputChannels,
-    int numberOfSamples)
-{
-    for(int i=0; i<numberOfSamples; ++i)
-    {
-        float inputSample = 0;
-
-        for(int chan=0; chan < numInputChannels; ++chan)
-        {
-            if(const float* inputChannel = inputChannelData[chan])
-            {
-                inputSample+=inputChannel[i];
-            }
-        }
-
-        inputSample *= 10.0f;
-        pushSample(&inputSample, 1);
-    }
-
-    for(int j=0; j<numOutputChannels; ++j)
-    {
-        if(float* outputChannel = outputChannelData[j])
-        {
-            juce::zeromem(outputChannel, (size_t) numberOfSamples * sizeof(float));
-        }
-    }
-}
-
-void AudioVisualiserOverlayed::getChannelAsPath (Path& path, const Range<float>* levels,
+void AudioVisualiserOverlayed::getChannelAsPath (juce::Path& path, const juce::Range<float>* levels,
                                                  int numLevels, int nextSample)
 {
     path.preallocateSpace (4 * numLevels + 8);
@@ -222,27 +190,23 @@ void AudioVisualiserOverlayed::getChannelAsPath (Path& path, const Range<float>*
     path.closeSubPath();
 }
 
-void AudioVisualiserOverlayed::paintChannel (Graphics& g, Rectangle<float> area,
-    const Range<float>* levels, int numLevels, int nextSample, juce::Colour& col)
+void AudioVisualiserOverlayed::paintChannel (juce::Graphics& g, juce::Rectangle<float> area,
+    const juce::Range<float>* levels, int numLevels, int nextSample, juce::Colour& col)
 {
-    Path p;
+    juce::Path p;
     getChannelAsPath (p, levels, numLevels, nextSample);
 
     // Outline
     juce::PathStrokeType stroke(getWidth() * 0.008f);
     g.setColour(col);
-    g.strokePath (p, stroke, AffineTransform::fromTargetPoints (0.0f, -1.0f,               area.getX(), area.getY(),
-                                                      0.0f, 1.0f,                area.getX(), area.getBottom(),
-                                                      (float) numLevels, -1.0f,  area.getRight(), area.getY()));
+    g.strokePath (p, stroke, juce::AffineTransform::fromTargetPoints (0.0f, -1.0f, area.getX(), area.getY(),
+        0.0f, 1.0f, area.getX(), area.getBottom(),
+        (float) numLevels, -1.0f, area.getRight(), area.getY()));
 
     
-    // Fill
-    g.setColour(col.withAlpha(0.75f));
-    g.fillPath (p, AffineTransform::fromTargetPoints (0.0f, -1.0f,               area.getX(), area.getY(),
-                                                      0.0f, 1.0f,                area.getX(), area.getBottom(),
-                                                      (float) numLevels, -1.0f,  area.getRight(), area.getY()));
-
-
+    // Fill with increased transparency
+    g.setColour(col.withMultipliedAlpha(0.83f));
+    g.fillPath (p, juce::AffineTransform::fromTargetPoints (0.0f, -1.0f, area.getX(), area.getY(),
+        0.0f, 1.0f, area.getX(), area.getBottom(),
+        (float) numLevels, -1.0f, area.getRight(), area.getY()));
 }
-
-} // namespace juce

@@ -88,11 +88,11 @@ void SimplePluginAudioProcessor::changeProgramName(int index, const juce::String
 //==============================================================================
 void SimplePluginAudioProcessor::prepareToPlay(double sampleRate, int /*samplesPerBlock*/)
 {
-    rmsLeft.reset(sampleRate, meterSmoothingLengthSeconds);
-    rmsRight.reset(sampleRate, meterSmoothingLengthSeconds);
+    rmsLeft.reset(sampleRate, config::meterSmoothingLengthSeconds);
+    rmsRight.reset(sampleRate, config::meterSmoothingLengthSeconds);
     rmsLeft.setCurrentAndTargetValue(config::NEGATIVE_INF_THRESH);
     rmsRight.setCurrentAndTargetValue(config::NEGATIVE_INF_THRESH);
-    levelSmoothed.reset(sampleRate, gainSmoothingLengthSeconds);
+    levelSmoothed.reset(sampleRate, config::gainSmoothingLengthSeconds);
 }
 
 void SimplePluginAudioProcessor::releaseResources()

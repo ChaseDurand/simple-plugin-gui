@@ -51,12 +51,10 @@ public:
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> levelSmoothed = 1.0;
-    double gainSmoothingLengthSeconds = 0.03;
-    double meterSmoothingLengthSeconds = 0.5;
 
     float getRmsValue(const int channel) const;
 
-    juce::AudioVisualiserOverlayed audioDisplayScroll {2};
+    AudioVisualiserOverlayed audioDisplayScroll {2};
     juce::AudioDeviceManager audioDeviceManager;
 
 private:

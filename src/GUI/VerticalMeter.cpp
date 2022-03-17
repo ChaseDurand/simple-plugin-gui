@@ -1,6 +1,7 @@
 #include "VerticalMeter.h"
 
 // TODO add orange and red for clipping
+// TODO fix low threshold graphics bug
 
 void VerticalMeter::paint(juce::Graphics& g)
 {

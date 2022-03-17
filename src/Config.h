@@ -1,3 +1,5 @@
+// Constants used throughout the plugin.
+
 #pragma once
 #include <juce_core/juce_core.h>
 
@@ -12,4 +14,6 @@ namespace config
     const int RADIO_ID_CHANNEL = 01;
     const juce::String CHANNEL_ID("CHANNEL");
     const juce::String CHANNEL_NAME("Channel");
+    const double gainSmoothingLengthSeconds = 0.03;
+    const double meterSmoothingLengthSeconds = 0.5;
 }

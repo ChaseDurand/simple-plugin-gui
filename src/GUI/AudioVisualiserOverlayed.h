@@ -2,10 +2,8 @@
 #include <juce_events/juce_events.h>
 #include <juce_audio_basics/juce_audio_basics.h>
 
-namespace juce
-{
-class AudioVisualiserOverlayed  : public Component,
-                                  private Timer
+class AudioVisualiserOverlayed  : public juce::Component,
+                                  private juce::Timer
 {
 public:
     /** Creates a visualiser with the given number of channels. */
@@ -28,7 +26,7 @@ public:
     void setSamplesPerBlock (int newNumInputSamplesPerBlock) noexcept;
 
     /** */
-    int getSamplesPerBlock() const noexcept                         { return inputSamplesPerBlock; }
+    int getSamplesPerBlock() const noexcept {return inputSamplesPerBlock;}
 
     /** Clears the contents of the buffers. */
     void clear();
@@ -37,13 +35,13 @@ public:
         The number of channels provided here is expected to match the number of channels
         that this AudioVisualiserOverlayed has been told to use.
     */
-    void pushBuffer (const AudioBuffer<float>& bufferToPush);
+    void pushBuffer (const juce::AudioBuffer<float>& bufferToPush);
 
     /** Pushes a buffer of channels data.
         The number of channels provided here is expected to match the number of channels
         that this AudioVisualiserOverlayed has been told to use.
     */
-    void pushBuffer (const AudioSourceChannelInfo& bufferToPush);
+    void pushBuffer (const juce::AudioSourceChannelInfo& bufferToPush);
 
     /** Pushes a buffer of channels data.
         The number of channels provided here is expected to match the number of channels
@@ -58,7 +56,7 @@ public:
     void pushSample (const float* samplesForEachChannel, int numChannels);
 
     /** Sets the colours used to paint the */
-    void setColours (Colour backgroundColour, Colour waveformColour) noexcept;
+    void setColours (juce::Colour backgroundColour, juce::Colour waveformColour) noexcept;
 
     /** Sets the frequency at which the component repaints itself. */
     void setRepaintRate (int frequencyInHz);
@@ -67,33 +65,27 @@ public:
         The default implementation just calls getChannelAsPath() and fits this into the given
         area. You may want to override this to draw things differently.
     */
-    virtual void paintChannel (Graphics&, Rectangle<float> bounds,
-        const Range<float>* levels, int numLevels, int nextSample, juce::Colour& col);
+    virtual void paintChannel (juce::Graphics&, juce::Rectangle<float> bounds,
+        const juce::Range<float>* levels, int numLevels, int nextSample, juce::Colour& col);
 
     /** Creates a path which contains the waveform shape of a given set of range data.
         The path is normalised so that -1 and +1 are its upper and lower bounds, and it
         goes from 0 to numLevels on the X axis.
     */
-    void getChannelAsPath (Path& result, const Range<float>* levels, int numLevels, int nextSample);
+    void getChannelAsPath (juce::Path& result, const juce::Range<float>* levels, int numLevels, int nextSample);
 
     //==============================================================================
     /** @internal */
-    void paint (Graphics&) override;
-
-    void audioDeviceIOCallback (const float** inputChannelData, int numInputChannels,
-                    float** outputChannelData, int numOutputChannels,
-                    int numberOfSamples);
+    void paint (juce::Graphics&) override;
 
 private:
     struct ChannelInfo;
 
-    OwnedArray<ChannelInfo> channels;
+    juce::OwnedArray<ChannelInfo> channels;
     int numSamples, inputSamplesPerBlock;
-    Colour backgroundColour, waveformColour;
+    juce::Colour backgroundColour, waveformColour;
 
     void timerCallback() override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioVisualiserOverlayed)
 };
-
-} // namespace juce
