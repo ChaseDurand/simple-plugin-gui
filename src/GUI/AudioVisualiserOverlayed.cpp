@@ -203,7 +203,6 @@ void AudioVisualiserOverlayed::paintChannel (juce::Graphics& g, juce::Rectangle<
         0.0f, 1.0f, area.getX(), area.getBottom(),
         (float) numLevels, -1.0f, area.getRight(), area.getY()));
 
-    
     // Fill with increased transparency
     g.setColour(col.withMultipliedAlpha(0.83f));
     g.fillPath (p, juce::AffineTransform::fromTargetPoints (0.0f, -1.0f, area.getX(), area.getY(),

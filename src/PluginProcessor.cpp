@@ -155,6 +155,9 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
 
     auto channelSelection = apvts.getRawParameterValue(config::CHANNEL_ID)->load();
 
+    // Buffer to push to audio visualiser
+    juce::AudioBuffer<float> bufferVis(2, buffer.getNumSamples());
+
     // Because we are applying a gain ramp across the buffer,
     // process all channels per sample (vs all samples per channels).
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample){
@@ -166,6 +169,7 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
             {
                 auto *channelData = buffer.getWritePointer(channel);
                 channelData[sample] *= gainToApply;
+                bufferVis.setSample(channel, sample, channelData[sample]);
             }
         }
         else
@@ -188,15 +192,18 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
                 {
                     auto *channelDataOut = buffer.getWritePointer(channel);
                     channelDataOut[sample] = channelDataSource[sample];
+                    bufferVis.setSample(channel, sample, 0);
+                }
+                else
+                {
+                    bufferVis.setSample(channel, sample, channelDataSource[sample]);
                 }
             }
         }
-
-
     }
 
     // Update scrolling waveform
-    audioDisplayScroll.pushBuffer(buffer);
+    audioDisplayScroll.pushBuffer(bufferVis);
 
     // Increment rms smoothed value.
     rmsLeft.skip(buffer.getNumSamples());
