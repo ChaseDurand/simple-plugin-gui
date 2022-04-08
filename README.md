@@ -2,7 +2,7 @@
 
 Development status: in progress.
 
-A simple audio plugin made with JUCE showing knobs, toggles, switches, waveform display, and a VU meter.
+A simple audio plugin made with JUCE showing knobs, toggles, switches, and a VU meter.
 
 This plugin includes my subjective and non-exhaustive list of details that make a plugin feel high quality and easy to use, including:
 * Proportional resizing
