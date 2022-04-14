@@ -6,10 +6,6 @@
 SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginAudioProcessor &p)
     : AudioProcessorEditor(&p), processorRef(p)
 {
-
-    // Audio Waveform Display
-    addAndMakeVisible(processorRef.audioDisplayScroll);
-
     // Mute Button
     muteButton.setColour(MuteButton::ColourIds::borderColourId, CustomColours::offWhite);
     muteButton.setColour(MuteButton::ColourIds::tickDisabledColourId, CustomColours::grey);
@@ -108,8 +104,6 @@ void SimplePluginAudioProcessorEditor::resized()
     int verticalMargin = bounds.getHeight() * 0.05f;
     int lowerComponentY = outerMargin + audioDisplayHeight + verticalMargin;
 
-    processorRef.audioDisplayScroll.setBounds(bounds.getX(), bounds.getY(), audioDisplayWidth, audioDisplayHeight);
-
     muteButton.setBounds(outerMargin,
                          lowerComponentY,
                          widthUnit * 0.9f,
@@ -127,7 +121,7 @@ void SimplePluginAudioProcessorEditor::resized()
         channelButtons[2].get()->setBounds(outerMargin + widthUnit * 3.32, lowerComponentY, buttonWidth, buttonHeight);
     }
 
-    float meterHeightPercent = 1.0f;
+    // float meterHeightPercent = 1.0f;
     int meterHeight = bounds.getHeight();
     int meterWidth = widthUnit * 0.35;
     meterL.setBounds((outerMargin + widthUnit * 4.0 + (0.5 * (widthUnit - 2 * meterWidth ))),

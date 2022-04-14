@@ -36,7 +36,6 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     int width, int height, float sliderPos, const float rotaryStartAngle, const float
     rotaryEndAngle, juce::Slider& /*slider*/)
 {
-
     float outerMargin = width * 0.03f;
     juce::Rectangle<float> bounds = juce::Rectangle<float>
         (x, y, width, height).reduced(outerMargin);
@@ -50,7 +49,8 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
 
     juce::Colour dialColour = CustomColours::offWhite;
     juce::Colour arcBgColour = CustomColours::grey;
-    juce::Colour arcFgColour = CustomColours::green;
+    juce::Colour arcFgColour = CustomColours::blue;
+    // TODO use colors from plugin editor or here, don't have both
 
     // Outer circle fill
     g.setColour(dialColour);
@@ -143,42 +143,37 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
 //          Channel Button           //
 ///////////////////////////////////////
 
-ChannelButtonLookAndFeel::ChannelButtonLookAndFeel() : LookAndFeel_V4()
-{
-    // setColour (juce::Slider::thumbColourId, juce::Colours::black);
-}
-
-// void ChannelButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& button, float x, float y,
-//     float w, float /*h*/, bool ticked, bool /*isEnabled*/,
-//     bool /*shouldDrawButtonAsHighlighted*/,
-//     bool /*shouldDrawButtonAsDown*/)
+// ChannelButtonLookAndFeel::ChannelButtonLookAndFeel() : LookAndFeel_V4()
 // {
-//     float outerMargin = w * 0.03f;
-//     juce::Rectangle<float> bounds = juce::Rectangle<float>
-//         (x, y, button.getWidth(), button.getHeight()).reduced(outerMargin);
-//     float radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) * 0.35f;
-//     float innerRadius = radius / 1.44f;
-
-//     // Outer circle
-//     g.setColour(button.findColour(MuteButton::ColourIds::borderColourId));
-//     g.fillEllipse (button.getWidth() * 0.5f - radius,
-//         button.getHeight() * 0.5f - radius,
-//         radius * 2.0f, radius * 2.0f);
-
-//     if (ticked)
-//     {
-//         // Enabled
-//         g.setColour(button.findColour(MuteButton::ColourIds::tickColourId));
-//     }
-//     else{
-//         // Disabled
-//         g.setColour(button.findColour(MuteButton::ColourIds::tickDisabledColourId));
-//     }
-
-//     // Inner circle/LED
-//     g.fillEllipse (button.getWidth() * 0.5f - innerRadius,
-//         button.getWidth() * 0.5f - innerRadius,
-//         innerRadius * 2.0f, innerRadius * 2.0f);
-
-//     return;
 // }
+
+void ChannelButtonLookAndFeel::drawButtonText(juce::Graphics & g,
+    juce::TextButton & button, bool shouldDrawButtonAsHighlighted,
+    bool shouldDrawButtonAsDown)
+    {
+        juce::Font font (getTextButtonFont (button, button.getHeight()));
+        g.setFont (font);
+        g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
+                                                                : juce::TextButton::textColourOffId)
+                        .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
+
+        const int yIndent = juce::jmin (4, button.proportionOfHeight (0.3f));
+        const int cornerSize = juce::jmin (button.getHeight(), button.getWidth()) / 2;
+
+        const int fontHeight = juce::roundToInt (font.getHeight() * 0.6f);
+        const int leftIndent  = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnLeft() ? 4 : 2));
+        const int rightIndent = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
+        const int textWidth = button.getWidth() - leftIndent - rightIndent;
+
+        std::cout<< button.getWidth() << ", " << textWidth << std::endl;
+
+        // if (textWidth > 0)
+        //     g.drawFittedText (button.getButtonText(),
+        //                     leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
+        //                     juce::Justification::centred, 2);
+
+        if (textWidth > 0)
+            g.drawFittedText (button.getButtonText(),
+                            leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
+                            juce::Justification::centred, 2);
+    }

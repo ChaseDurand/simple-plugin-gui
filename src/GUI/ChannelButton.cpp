@@ -4,7 +4,7 @@
 
 ChannelButton::ChannelButton(const juce::String& buttonName) : juce::TextButton(buttonName)
 {
-    // setLookAndFeel(&channelButtonLookAndFeel);
+    setLookAndFeel(&channelButtonLookAndFeel);
     setWantsKeyboardFocus(true);
 }
 

@@ -3,7 +3,6 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_audio_devices/juce_audio_devices.h>
-#include "GUI/AudioVisualiserOverlayed.h"
 
 
 //==============================================================================
@@ -54,7 +53,6 @@ public:
 
     float getRmsValue(const int channel) const;
 
-    AudioVisualiserOverlayed audioDisplayScroll {2};
     juce::AudioDeviceManager audioDeviceManager;
 
 private:

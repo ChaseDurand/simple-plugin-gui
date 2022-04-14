@@ -202,9 +202,6 @@ void SimplePluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         }
     }
 
-    // Update scrolling waveform
-    audioDisplayScroll.pushBuffer(bufferVis);
-
     // Increment rms smoothed value.
     rmsLeft.skip(buffer.getNumSamples());
     rmsRight.skip(buffer.getNumSamples());
