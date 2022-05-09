@@ -12,12 +12,3 @@ ChannelButton::~ChannelButton()
 {
     setLookAndFeel(nullptr);
 }
-
-// void ChannelButton::paint(juce::Graphics& g){
-//     juce::Button::paint(g);
-//     // If component has keyboard focus, draw selector indicators
-//     if(hasKeyboardFocus(true)){
-//         juce::Rectangle<float> bounds = getLocalBounds().toFloat();
-//         drawFocusOutline(bounds, g, CustomColours::offWhite);
-//     } 
-// }
