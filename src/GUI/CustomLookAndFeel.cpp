@@ -146,23 +146,73 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
 void ChannelButtonLookAndFeel::drawButtonText(juce::Graphics & g,
     juce::TextButton & button, bool shouldDrawButtonAsHighlighted,
     bool shouldDrawButtonAsDown)
+{
+    juce::Font font = button.getHeight() * 0.2f;
+    g.setFont (font);
+    g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
+                                                            : juce::TextButton::textColourOffId)
+                    .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
+
+    const int yIndent = juce::jmin (4, button.proportionOfHeight (0.3f));
+    const int cornerSize = juce::jmin (button.getHeight(), button.getWidth()) / 10;
+
+    const int fontHeight = juce::roundToInt (button.getHeight() * 0.07f);
+    const int leftIndent  = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnLeft() ? 4 : 2));
+    const int rightIndent = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
+    const int textWidth = button.getWidth() - leftIndent - rightIndent;
+
+    if (textWidth > 0)
+        g.drawFittedText (button.getButtonText(),
+                        leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
+                        juce::Justification::centred, 1);
+}
+
+void ChannelButtonLookAndFeel::drawButtonBackground(juce::Graphics & g,
+    juce::Button & button, const juce::Colour & backgroundColour,
+    bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+{
+
+    auto cornerSize = button.getWidth() * 0.4f;
+    auto bounds = button.getLocalBounds().toFloat().reduced (0.5f, 0.5f);
+
+    auto baseColour = backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+                                      .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
+
+    if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted)
+        baseColour = baseColour.contrasting (shouldDrawButtonAsDown ? 0.2f : 0.05f);
+
+    g.setColour (baseColour);
+
+    auto flatOnLeft   = button.isConnectedOnLeft();
+    auto flatOnRight  = button.isConnectedOnRight();
+    auto flatOnTop    = button.isConnectedOnTop();
+    auto flatOnBottom = button.isConnectedOnBottom();
+
+    float outlineWidth = juce::jmax(1.0f, button.getWidth() * 0.04f);
+
+    if (flatOnLeft || flatOnRight || flatOnTop || flatOnBottom)
     {
-        juce::Font font = button.getHeight() * 0.2f;
-        g.setFont (font);
-        g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
-                                                                : juce::TextButton::textColourOffId)
-                        .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
+        juce::Path path;
+        path.addRoundedRectangle (bounds.getX() + outlineWidth * 0.5f,
+            bounds.getY() + outlineWidth * 0.5f,
+            bounds.getWidth() - outlineWidth,
+            bounds.getHeight() - outlineWidth,
+            cornerSize, cornerSize,
+            ! (flatOnLeft  || flatOnTop),
+            ! (flatOnRight || flatOnTop),
+            ! (flatOnLeft  || flatOnBottom),
+            ! (flatOnRight || flatOnBottom));
 
-        const int yIndent = juce::jmin (4, button.proportionOfHeight (0.3f));
-        const int cornerSize = juce::jmin (button.getHeight(), button.getWidth()) / 10;
+        g.fillPath (path);
 
-        const int fontHeight = juce::roundToInt (button.getHeight() * 0.07f);
-        const int leftIndent  = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnLeft() ? 4 : 2));
-        const int rightIndent = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
-        const int textWidth = button.getWidth() - leftIndent - rightIndent;
-
-        if (textWidth > 0)
-            g.drawFittedText (button.getButtonText(),
-                            leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
-                            juce::Justification::centred, 1);
+        g.setColour (button.findColour (juce::ComboBox::outlineColourId));
+        g.strokePath (path, juce::PathStrokeType (outlineWidth));
     }
+    else
+    {
+        g.fillRoundedRectangle (bounds, cornerSize);
+
+        g.setColour (button.findColour (juce::ComboBox::outlineColourId));
+        g.drawRoundedRectangle (bounds, cornerSize, outlineWidth);
+    }
+}
