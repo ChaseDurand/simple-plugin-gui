@@ -143,37 +143,28 @@ void MuteButtonLookAndFeel::drawTickBox (juce::Graphics& g, juce::Component& but
 //          Channel Button           //
 ///////////////////////////////////////
 
-// ChannelButtonLookAndFeel::ChannelButtonLookAndFeel() : LookAndFeel_V4()
-// {
-// }
-
 void ChannelButtonLookAndFeel::drawButtonText(juce::Graphics & g,
     juce::TextButton & button, bool shouldDrawButtonAsHighlighted,
     bool shouldDrawButtonAsDown)
     {
-        juce::Font font (getTextButtonFont (button, button.getHeight()));
+        juce::Font font = button.getHeight() * 0.2f;
         g.setFont (font);
         g.setColour (button.findColour (button.getToggleState() ? juce::TextButton::textColourOnId
                                                                 : juce::TextButton::textColourOffId)
                         .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
 
         const int yIndent = juce::jmin (4, button.proportionOfHeight (0.3f));
-        const int cornerSize = juce::jmin (button.getHeight(), button.getWidth()) / 2;
+        const int cornerSize = juce::jmin (button.getHeight(), button.getWidth()) / 10;
 
-        const int fontHeight = juce::roundToInt (font.getHeight() * 0.6f);
+        const int fontHeight = juce::roundToInt (button.getHeight() * 0.07f);
         const int leftIndent  = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnLeft() ? 4 : 2));
         const int rightIndent = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
         const int textWidth = button.getWidth() - leftIndent - rightIndent;
 
-        std::cout<< button.getWidth() << ", " << textWidth << std::endl;
-
-        // if (textWidth > 0)
-        //     g.drawFittedText (button.getButtonText(),
-        //                     leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
-        //                     juce::Justification::centred, 2);
+        std::cout<< textWidth << " , " << button.getHeight() - yIndent * 2 << std::endl;
 
         if (textWidth > 0)
             g.drawFittedText (button.getButtonText(),
                             leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
-                            juce::Justification::centred, 2);
+                            juce::Justification::centred, 1);
     }

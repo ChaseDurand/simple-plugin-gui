@@ -18,6 +18,6 @@ ChannelButton::~ChannelButton()
 //     // If component has keyboard focus, draw selector indicators
 //     if(hasKeyboardFocus(true)){
 //         juce::Rectangle<float> bounds = getLocalBounds().toFloat();
-//         drawFocusOutline(bounds, g, findColour(ChannelButton::ColourIds::borderColourId));
+//         drawFocusOutline(bounds, g, CustomColours::offWhite);
 //     } 
 // }
