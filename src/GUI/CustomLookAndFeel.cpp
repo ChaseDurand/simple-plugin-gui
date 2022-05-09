@@ -161,8 +161,6 @@ void ChannelButtonLookAndFeel::drawButtonText(juce::Graphics & g,
         const int rightIndent = juce::jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
         const int textWidth = button.getWidth() - leftIndent - rightIndent;
 
-        std::cout<< textWidth << " , " << button.getHeight() - yIndent * 2 << std::endl;
-
         if (textWidth > 0)
             g.drawFittedText (button.getButtonText(),
                             leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
