@@ -1,6 +1,7 @@
-static void drawFocusOutline(const juce::Rectangle<float>& bounds, juce::Graphics& g, juce::Colour c){
-    float len    = juce::jmin (bounds.getHeight(), bounds.getWidth()) * 0.07f;
-    float thick  = len * 0.5f;
+static void drawFocusOutline(const juce::Rectangle<float>& bounds, juce::Graphics& g, juce::Colour c, const int& pluginWidth){
+    float minLen = juce::jmin(bounds.getHeight() * 0.5f, bounds.getWidth() * 0.5f);
+    float len = juce::jmin(pluginWidth*0.02f, minLen);
+    float thick = pluginWidth*0.01f;
 
     juce::Point<float> topLeft = bounds.getTopLeft();
     juce::Point<float> topRight = bounds.getTopRight();

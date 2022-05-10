@@ -18,7 +18,7 @@ SimplePluginAudioProcessorEditor::SimplePluginAudioProcessorEditor(SimplePluginA
     // Gain Knob
     gainKnob.setColour(juce::Slider::backgroundColourId, CustomColours::offWhite);
     gainKnob.setColour(juce::Slider::textBoxTextColourId, juce::Colours::black);
-    gainKnob.setColour(juce::Slider::rotarySliderFillColourId, CustomColours::blue);
+    gainKnob.setColour(juce::Slider::rotarySliderFillColourId, CustomColours::teal);
     gainKnob.setColour(juce::Slider::rotarySliderOutlineColourId, CustomColours::grey);
     addAndMakeVisible(gainKnob);
     gainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(

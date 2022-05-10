@@ -23,7 +23,11 @@ void RotaryDecibelSlider::paint(juce::Graphics& g)
     // If component has keyboard focus, draw selector indicators
     if(hasKeyboardFocus(true)){
         juce::Rectangle<float> bounds = getLocalBounds().toFloat();
-        drawFocusOutline(bounds, g, CustomColours::offWhite);
+        drawFocusOutline(bounds, g, CustomColours::offWhite, getTopLevelComponent()->getWidth());
+    }
+    else if(isMouseOver()){
+        juce::Rectangle<float> bounds = getLocalBounds().toFloat();
+        drawFocusOutline(bounds, g, CustomColours::offWhite.withAlpha(0.5f), getTopLevelComponent()->getWidth());     
     }
 }
 

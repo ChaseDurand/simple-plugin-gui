@@ -91,10 +91,10 @@ void RotaryDecibelSliderLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, 
     return;
 }
 
-RisizableTextBox* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& slider)
+ResizableTextBox* RotaryDecibelSliderLookAndFeel::createSliderTextBox(juce::Slider& slider)
 {
     // TODO reduce size
-    auto* textBox = new RisizableTextBox();
+    auto* textBox = new ResizableTextBox();
     textBox->setBounds(0, slider.getHeight() * 0.5f, slider.getWidth(), 16);
     textBox->setColour ( juce::Label::textColourId, slider.findColour(juce::Slider::textBoxTextColourId));
     return textBox; 

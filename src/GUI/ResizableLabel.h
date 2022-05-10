@@ -1,12 +1,13 @@
 #pragma once
 #include <juce_gui_extra/juce_gui_extra.h>
 
-class RisizableTextBox : public juce::Label
+class ResizableTextBox : public juce::Label
 {
 public:
     static juce::String valueShownWithEditor;
 
-    RisizableTextBox();
+    ResizableTextBox();
 
     void resized() override;
+    void paint(juce::Graphics &g) override;
 };

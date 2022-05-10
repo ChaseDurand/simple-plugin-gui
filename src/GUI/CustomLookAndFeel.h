@@ -13,7 +13,7 @@ class RotaryDecibelSliderLookAndFeel : public juce::LookAndFeel_V4
         const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider&) override;
 
 
-    RisizableTextBox* createSliderTextBox(juce::Slider& slider) override;
+    ResizableTextBox* createSliderTextBox(juce::Slider& slider) override;
 
 };
 
